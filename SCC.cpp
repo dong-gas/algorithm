@@ -40,3 +40,12 @@ void solve() {
     }
     for (ll i = 1; i <= n; i++) if (!d[i]) dfs(i);
 }
+
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+#endif
+    int tc = 1; //cin >> tc; 
+    while (tc--) solve();
+}
