@@ -1,10 +1,11 @@
 //O(V^2E)
+const ll MAXN = 555;
 struct edge {
     ll to, cap, rev;
 };
-ll level[N];
-ll work[N];
-vector<edge> adj[N];
+ll level[MAXN];
+ll work[MAXN];
+vector<edge> adj[MAXN];
 
 void add_edge(ll from, ll to, ll c) {
     adj[from].push_back({ to, c, (ll)adj[to].size() });
@@ -12,8 +13,8 @@ void add_edge(ll from, ll to, ll c) {
 }
 
 bool bfs(ll src, ll sink) {
-    fill(level, level + N, -1);
-    fill(work, work + N, 0);
+    fill(level, level + MAXN, -1);
+    fill(work, work + MAXN, 0);
     level[src] = 0;
 
     queue<ll> q;
