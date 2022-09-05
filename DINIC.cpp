@@ -1,4 +1,4 @@
-//O(VE^2)
+//O(V^2E)
 struct edge {
     ll to, cap, rev;
 };
