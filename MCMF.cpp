@@ -1,90 +1,60 @@
-//O(VEf)
-#include <bits/stdc++.h>
-#define endl '\n'
-#define MOD 1000000007
-#define INF 9876543210
-using namespace std;
-using ll = long long;
-using pll = pair<ll, ll>;
+//O(Ef)
+const ll N = 2020;
 
-const ll N = 808;
+struct edge {
+	ll to, cap, rev, cost;
+};
+vector<edge> adj[N];
 
-ll n, m, x, y;
-ll cap[N][N];   //용량
-ll cost[N][N];  //비용
-ll flow[N][N];  //유량
-ll cache[N];    //이전 노드 저장하는 용도
-ll dis[N];      //거리
-bool inQ[N];    //큐 안에 있는지 확인하는 용도s
-vector<ll> adj[N];
+ll n;
+ll a[N];
+ll dist[N], p[N], pe[N];
+bool inQ[N];
 
-
-void add_edge(ll from, ll to, ll ca, ll co) {//용량, 비용
-	adj[from].push_back(to);
-	adj[to].push_back(from);
-	cap[from][to] = ca;
-	cap[to][from] = 0;
-	cost[to][from] = -co;
-	cost[from][to] = co;
+void add_edge(ll u, ll v, ll c, ll cost) {
+	adj[u].push_back({ v, c, (ll)adj[v].size(), cost });
+	adj[v].push_back({ u, 0, (ll)adj[u].size() - 1, -cost });
 }
 
-pll mcmf(ll src, ll sink) {
-	ll min_cost = 0;
-	ll max_flow = 0;
-	while (1) {
-		queue<ll> q;
-		memset(cache, -1, sizeof(cache));
-		memset(inQ, false, sizeof(inQ));
-		fill(dis, dis + N, 9876543210);
-		dis[src] = 0;
-		inQ[src] = true;
-		q.push(src);
-		while (!q.empty()) {
-			ll now = q.front();
-			q.pop();
-			inQ[now] = false;
-			for (ll nxt : adj[now]) {
-				if (cap[now][nxt] - flow[now][nxt] > 0 && dis[nxt] > dis[now] + cost[now][nxt]) {
-					dis[nxt] = dis[now] + cost[now][nxt];
-					cache[nxt] = now;
-					if (!inQ[nxt]) {
-						q.push(nxt);
-						inQ[nxt] = true;
-					}
-				}
-			}
-		}
-		if (cache[sink] == -1) break;
-		ll fl = INF;
-		for (ll i = sink; i != src; i = cache[i]) fl = min(fl, cap[cache[i]][i] - flow[cache[i]][i]);
-		for (ll i = sink; i != src; i = cache[i]) {
-			min_cost += fl * cost[cache[i]][i];
-			flow[cache[i]][i] += fl;
-			flow[i][cache[i]] -= fl;
-		}
-		max_flow += fl;
-	}
-	return { min_cost,max_flow };
+bool spfa(ll s, ll t) {
+    fill(dist, dist + N, INF);
+    memset(inQ, 0, sizeof(inQ));
+
+    queue<ll> q;
+    q.emplace(s); dist[s] = 0; inQ[s] = 1;
+    while (q.size()) {
+        ll x = q.front(); q.pop();
+        inQ[x] = 0;
+
+        for (ll i = 0; i < adj[x].size(); i++) {
+            auto& e = adj[x][i];
+            if (e.cap && dist[x] + e.cost < dist[e.to]) {
+                dist[e.to] = dist[x] + e.cost;
+                p[e.to] = x; pe[e.to] = i;
+                if (!inQ[e.to]) {
+                    inQ[e.to] = 1;
+                    q.emplace(e.to);
+                }
+            }
+        }
+
+    }
+    return dist[t] != INF;
 }
 
-void solve() {
-	cin >> n >> m;
-	for (ll i = 1; i <= n; i++) {
-		ll cnt;
-		cin >> cnt;
-		for (ll j = 1; j <= cnt; j++) {
-			cin >> x >> y;
-			add_edge(i, n + x, 1, y);
-		}
-	}
-	for (ll i = 1; i <= n; i++) add_edge(0, i, 1, 0);
-	for (ll i = 1; i <= m; i++) add_edge(n + i, m + n + 1, 1, 0);
-	pll ans = mcmf(0, m + n + 1);
-	cout << ans.second << endl << ans.first << endl;
-}
-
-int main() {
-	cin.tie(0)->sync_with_stdio(0);
-	int tc = 1; //cin >> tc;
-	while (tc--) solve();
+pll mcmf(ll s, ll t) {
+    ll min_cost = 0, max_flow = 0, flow, rev;
+    while (spfa(s, t)) {
+        flow = INF;
+        for (ll i = t; i != s; i = p[i])
+            flow = min(flow, adj[p[i]][pe[i]].cap);
+        min_cost += flow * dist[t];
+        for (ll i = t; i != s; i = p[i]) {
+            rev = adj[p[i]][pe[i]].rev;
+            adj[p[i]][pe[i]].cap -= flow;
+            adj[i][rev].cap += flow;
+        }
+    }
+    max_flow += flow;
+    return { min_cost,max_flow };
 }
