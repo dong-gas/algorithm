@@ -55,7 +55,7 @@ void solve() {
         ll u, v; cin >> u >> v;
         adj[u].push_back(v);
     }
-    for (ll i = 1; i <= n; i++) if (!d[i]) dfs(i);
+    for (ll i = 1; i <= 2 * n; i++) if (!d[i]) dfs(i);
     
     //여기서부터는 2-sat
     //(a or b)면 !a->b, !b->a 추가해야 함.
