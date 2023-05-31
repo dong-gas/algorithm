@@ -8,11 +8,11 @@ int work[MAXN];
 vector<edge> adj[MAXN];
 
 void add_edge(int from, int to, int c) {
-    adj[from].push_back({ to, c, (ll)adj[to].size() });
-    adj[to].push_back({ from, 0, (ll)adj[from].size() - 1 });
+    adj[from].push_back({ to, c, (int)adj[to].size() });
+    adj[to].push_back({ from, 0, (int)adj[from].size() - 1 });
 }
 
-bool bfs(int src, ll sink) {
+bool bfs(int src, int sink) {
     fill(level, level + MAXN, -1);
     fill(work, work + MAXN, 0);
     level[src] = 0;
@@ -36,7 +36,7 @@ int dfs(int now, int sink, int amount) {
     for (int& i = work[now]; i < adj[now].size(); i++) {
         auto e = adj[now][i];
         if (e.cap > 0 && level[e.to] == level[now] + 1) {
-            ll df = dfs(e.to, sink, min(amount, e.cap));
+            int df = dfs(e.to, sink, min(amount, e.cap));
             if (df > 0) {
                 adj[now][i].cap -= df;
                 adj[e.to][e.rev].cap += df;
