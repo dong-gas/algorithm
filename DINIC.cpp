@@ -1,26 +1,26 @@
 //O(V^2E)
-const ll MAXN = 555;
+const int MAXN = 555;
 struct edge {
-    ll to, cap, rev;
+    int to, cap, rev;
 };
-ll level[MAXN];
-ll work[MAXN];
+int level[MAXN];
+int work[MAXN];
 vector<edge> adj[MAXN];
 
-void add_edge(ll from, ll to, ll c) {
+void add_edge(int from, int to, int c) {
     adj[from].push_back({ to, c, (ll)adj[to].size() });
     adj[to].push_back({ from, 0, (ll)adj[from].size() - 1 });
 }
 
-bool bfs(ll src, ll sink) {
+bool bfs(int src, ll sink) {
     fill(level, level + MAXN, -1);
     fill(work, work + MAXN, 0);
     level[src] = 0;
 
-    queue<ll> q;
+    queue<int> q;
     q.push(src);
     while (!q.empty()) {
-        ll now = q.front(); q.pop();
+        int now = q.front(); q.pop();
         for (auto& e : adj[now]) {
             if (e.cap > 0 && level[e.to] == -1) {
                 level[e.to] = level[now] + 1;
@@ -31,9 +31,9 @@ bool bfs(ll src, ll sink) {
     return level[sink] != -1;
 }
 
-ll dfs(ll now, ll sink, ll amount) {
+int dfs(int now, int sink, int amount) {
     if (now == sink) return amount;
-    for (ll& i = work[now]; i < adj[now].size(); i++) {
+    for (int& i = work[now]; i < adj[now].size(); i++) {
         auto e = adj[now][i];
         if (e.cap > 0 && level[e.to] == level[now] + 1) {
             ll df = dfs(e.to, sink, min(amount, e.cap));
@@ -47,11 +47,11 @@ ll dfs(ll now, ll sink, ll amount) {
     return 0;
 }
 
-ll dinic(ll src, ll sink) {
-    ll max_flow = 0;
+int dinic(int src, int sink) {
+    int max_flow = 0;
     while (bfs(src, sink)) {
         while (1) {
-            ll df = dfs(src, sink, INF);
+            int df = dfs(src, sink, INF);
             if (!df) break;
             max_flow += df;
         }
