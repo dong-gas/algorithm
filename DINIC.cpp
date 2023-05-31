@@ -1,4 +1,4 @@
-//O(V^2E)
+// O(min(fE, V^2E))
 const int MAXN = 555;
 struct edge {
     int to, cap, rev;
