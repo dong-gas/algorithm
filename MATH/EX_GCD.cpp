@@ -13,9 +13,10 @@ ll ex_gcd(ll a, ll b, ll& x, ll& y) {
     ll tmp = y;
     y = x - (a / b) * y;
     x = tmp;
+    /*x가 양수여야 하면
     if (x <= 0) {
         x += b;
         y -= a;
-    }
+    }*/
     return ret;
 }
