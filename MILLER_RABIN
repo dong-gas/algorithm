@@ -1,3 +1,4 @@
+//O(k(logN)^3)
 using ull = unsigned long long;
 ull mul(ull x, ull y, ull mod){ return (ull)((__int128) x * y % mod); }
 ull ipow(ull x, ull y, ull p){
@@ -29,8 +30,8 @@ bool isprime(ll x){ //long long range
 }
 bool isprime(int x){ //int range
 	for(auto &i : {2, 7, 61}){
-    if (x == i) return 1;
+    		if (x == i) return 1;
 		if (miller_rabin(x, i)) return 0;
 	}
-  return 1;
+	return 1;
 }
