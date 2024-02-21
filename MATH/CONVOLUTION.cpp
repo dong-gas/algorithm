@@ -23,17 +23,17 @@ fxht_xor(a,true);
 //AND, OR도 같은 작업 하면 됨. 아래는 검증 필요.
 void fwht_and(vector<ll> &a, bool inv) {
     ll n = a.size();
-    int dir = inv ? -1 : 1;
-    for(int s = 2, h = 1; s <= n; s <<= 1, h <<= 1)
-        for(int l = 0; l < n; l += s)
-            for(int i = 0; i < h; i++)
+    ll dir = inv ? -1 : 1;
+    for(ll s = 2, h = 1; s <= n; s <<= 1, h <<= 1)
+        for(ll l = 0; l < n; l += s)
+            for(ll i = 0; i < h; i++)
                 a[l + h] += dir * a[l + h + i];
 }
 void fwht_or(vector<ll> &a, bool inv) {
     ll n = a.size();
-    int dir = inv ? -1 : 1;
-    for(int s = 2, h = 1; s <= n; s <<= 1, h <<= 1)
-        for(int l = 0; l < n; l += s)
-            for(int i = 0; i < h; i++)
+    ll dir = inv ? -1 : 1;
+    for(ll s = 2, h = 1; s <= n; s <<= 1, h <<= 1)
+        for(ll l = 0; l < n; l += s)
+            for(ll i = 0; i < h; i++)
                 a[l + h + i] += dir * a[l + i];
 }
