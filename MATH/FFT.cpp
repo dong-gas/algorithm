@@ -1,6 +1,6 @@
 //FFT
 //TLE 나면 double로 gogo
-
+typedef complex<double> base;
 #define double long double 
 void fft(vector <base>& a, bool invert)
 {
