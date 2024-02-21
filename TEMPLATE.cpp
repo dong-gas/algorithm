@@ -1,12 +1,18 @@
-#include <bits/stdc++.h>
-#define endl '\n'
-#define MOD 1'000'000'007
-#define INF 1'000'000'000'000'000'000
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,avx,avx2")
+#include <bits/extc++.h>
 #define all(v) v.begin(), v.end()
 #define zip(v) sort(all(v)), v.erase(unique(all(v)), v.end())
+#define sz(v) (int)(v).size()
 using namespace std;
-using ll = long long;
-using pll = pair<ll, ll>;
+using namespace __gnu_pbds;
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<ll, ll> pll;
+typedef pair<int, int> pint;
+typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
 
 void solve() {
     
@@ -14,9 +20,6 @@ void solve() {
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
-#ifndef ONLINE_JUDGE
-    freopen("input.txt", "r", stdin);
-#endif
-    int tc = 1; //cin >> tc; 
-    while (tc--) solve();
+    int tc=1; //cin>>tc;
+    while(tc--) solve();
 }
