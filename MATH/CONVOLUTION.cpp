@@ -15,9 +15,15 @@ void fwht_xor(vector<ll> &a, bool inv) {
     }
 }
 
+//a, b convolution
 fxht_xor(a,false);
 fxht_xor(b,false);
 for(int i=0;i<(1ll<<n);i++) a[i]*=b[i];
+fxht_xor(a,true);
+
+//a끼리 convolution
+fxht_xor(a,false);
+for(int i=0;i<(1ll<<n);i++) a[i]*=a[i];
 fxht_xor(a,true);
 
 //AND, OR도 같은 작업 하면 됨. 아래는 검증 필요.
