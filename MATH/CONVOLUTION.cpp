@@ -27,7 +27,7 @@ void fwht_and(vector<ll> &a, bool inv) {
     for(ll s = 2, h = 1; s <= n; s <<= 1, h <<= 1)
         for(ll l = 0; l < n; l += s)
             for(ll i = 0; i < h; i++)
-                a[l + h] += dir * a[l + h + i];
+                a[l + i] += dir * a[l + h + i];
 }
 void fwht_or(vector<ll> &a, bool inv) {
     ll n = a.size();
