@@ -1,4 +1,5 @@
 //O(k(logN)^3)
+//k: number of test
 using ull = unsigned long long;
 ull mul(ull x, ull y, ull mod){ return (ull)((__int128) x * y % mod); }
 ull ipow(ull x, ull y, ull p){
@@ -34,4 +35,47 @@ bool isprime(int x){ //int range
 		if (miller_rabin(x, i)) return 0;
 	}
 	return 1;
+}
+
+//Pollard-rho
+//소인수분해 O(N^1/4)
+
+ll gcd(ll a,ll b) {
+    if(!b) return a;
+    return gcd(b,a%b);
+}
+
+void rec(ll n, vector<ll>& v) {
+	if (n == 1) return;
+	if (n % 2 == 0) {
+		v.push_back(2);
+		rec(n / 2, v);
+		return;
+	}
+	if (isprime(n)) {
+		v.push_back(n);
+		return;
+	}
+	ll a, b, c, g = n;
+	auto f = [&](ll x) {
+        	return (c + mul(x, x, n)) % n;
+    	};
+    	do {
+        	if (g == n) {
+            		a = b = rand() % (n - 2) + 2;
+            		c = rand() % 20 + 1;
+        	}
+        	a = f(a);
+        	b = f(f(b));
+        	g = gcd(abs(a - b), n);
+    	} while (g == 1);
+	rec(g, v);
+	rec(n / g, v);
+}
+
+vector<ll> factorize(ll n) {
+	vector<ll> ret;
+	rec(n, ret);
+	sort(ret.begin(), ret.end());
+	return ret;
 }
