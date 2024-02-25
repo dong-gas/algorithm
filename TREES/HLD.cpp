@@ -1,3 +1,4 @@
+//https://justicehui.github.io/hard-algorithm/2020/01/24/hld/
 int sz[101010], dep[101010], par[101010], top[101010], in[101010], out[101010];
 vector<int> g[101010];   //inp를 단방향 그래프로 변환한 그래프
 vector<int> inp[101010]; //입력 / 양방향 그래프
@@ -29,16 +30,16 @@ void dfs2(int u){
 	out[u] = pv;
 }
 
-int query(int a, int b){
+int hld(int a, int b){
     int ret = 0;
     while(top[a] ^ top[b]){ //같은 체인이 아니면 진행
         if(dep[top[a]] < dep[top[b]]) swap(a, b);
         int st = top[a];
-        ret += seg.query(in[st], in[a]);
+        ret += query(in[st], in[a]);
         a = par[st];
     }
     if(dep[a] > dep[b]) swap(a, b);
-    ret += seg.query(in[a], in[b]);
+    ret += query(in[a], in[b]);
     return ret;
 }
 
@@ -57,7 +58,7 @@ int main(){
         //1 v w : update v w
         //2 s e : query s e
         int op, a, b; cin >> op >> a >> b;
-        if(op == 1) update(a, b);
-        else cout << query(a, b) << "\n";
+        if(op == 1) update(in[a], b);      //update할 때, euler tour in에 해야하는 것 주의
+        else cout << hld(a, b) << "\n";
     }
 }
