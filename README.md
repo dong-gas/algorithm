@@ -42,5 +42,5 @@ Strings
 * suffix array + longest common prefix
 * ~~aho-corasick~~
 
-Geometryy
+Geometry
 * ~~template~~
