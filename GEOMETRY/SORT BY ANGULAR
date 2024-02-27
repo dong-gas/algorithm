@@ -1,7 +1,7 @@
 //gumgood's code
 
 pt o(0,0);
-sort(p.begin(), p.end(), [&](const pt p,const pt q){
+sort(p.begin(), p.end(), [&](const pt &p,const pt &q){
     if((p<o)^(q<o)) return q < p;                   //사이 각 pi이내로만 한정. 영역을 o기준 좌/우로 나누고 우 영역 점이 먼저 오게 정렬
     if(ll t = ccw(o,p,q)) return t > 0;          
     return abs(p.x)<abs(q.x) || abs(p.y)<abs(q.y);  //같은 직선이라면 가까운 게 먼저
