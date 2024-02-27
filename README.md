@@ -27,6 +27,7 @@ Graphs
 Trees
 * heavy-light decomposition
 * persistent segment tree
+* segment tree
   
 Math
 * extended euclidean algorithm
