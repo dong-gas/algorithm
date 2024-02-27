@@ -1,10 +1,17 @@
-# algorithm
+## 목차
+
+1. [Dp optimization]
+2. [Flow]
+3. [Grpahs]
+4. [Trees]
+5. [Math]
+6. [Strings]
 
 DP optimization
 * convex hull trick
 * divide and conquer
 * ~~knuth~~
-* sum over subsets
+* ~~sum over subsets~~
 
 Flow
 * dinic
@@ -14,6 +21,10 @@ Flow
 Graphs
 * strongly connected component
 * ~~articulation point & bridge~~
+
+Trees
+* heavy-light decomposition
+* persistent segment tree
   
 Math
 * extended euclidean algorithm
@@ -27,3 +38,7 @@ Strings
 * kmp
 * manacher
 * suffix array + longest common prefix
+* ~~aho-corasick~~
+
+Geometryy
+* ~~template~~
