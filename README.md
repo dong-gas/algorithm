@@ -6,7 +6,7 @@
 4. [Trees]
 5. [Math]
 6. [Strings]
-
+7. [Etc]
 ---
 
 DP optimization
@@ -45,3 +45,6 @@ Strings
 
 Geometry
 * ~~template~~
+
+Etc
+* ~~Mo's~~
