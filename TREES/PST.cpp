@@ -1,8 +1,6 @@
-#include <bits/stdc++.h>
-#define endl '\n'
-using namespace std;
-using ll = int;
-using pll = pair<ll, ll>;
+// 포인터 구현. 느리고 메모리 많이 먹음.
+// 하단에 배열 구현 있음.
+// https://justicehui.github.io/medium-algorithm/2020/02/29/PST/
 
 struct Node {
     Node* l, * r;
@@ -79,8 +77,47 @@ void solve() {
     }
 }
 
-int main() {
-    cin.tie(0)->sync_with_stdio(0);
-    int tc = 1; //cin >> tc;
-    while (tc--) solve();
+******************************************************************************************
+
+//배열 구현
+//포인터에 비해 메모리, 속도 good
+//포인터 구현 남겨둔 이유: 저게 더 쉽고 직관적인 듯...
+//https://blog.naver.com/PostView.nhn?blogId=ingu9981&logNo=221605411695&parentCategoryNo=&categoryNo=19&viewDate=&isShowPopularPosts=true&from=search
+
+struct PST {
+    int l, r, v;
+    PST() : l(0), r(0), v(0) {}
+};
+
+PST tree[300030]; //최악의 경우 생성 될 세그트리 노드의 개수만큼 넉넉히 만들기.
+int tn; //새로 노드 만들 때, 인덱스임.
+
+void update(int prv, int now, int s, int e, int idx, int v) {
+    if(s==e) {
+        tree[now].v=tree[prv].v+v;
+        return;
+    }
+    int mid=s+e>>1;
+    if(idx<=mid) {//왼쪽 자식 업데이트
+        if(tree[now].l==0 || tree[now].l==tree[prv].l) tree[now].l=tn++;
+        //왼쪽 자식이 없거나, 이전꺼랑 같으면 새로 만들어 줘야 함. tree[tn]이 그것
+        
+        if(tree[now].r==0) tree[now].r=tree[prv].r;
+        //오른쪽 자식이 빈 노드면 이전 거 그대로 사용
+        
+        update(tree[prv].l,tree[now].l,s,mid,idx,v);
+    }
+    else {
+        if(tree[now].r==0 || tree[now].r==tree[prv].r) tree[now].r=tn++;
+        if(tree[now].l==0) tree[now].l=tree[prv].l;
+        update(tree[prv].r,tree[now].r,mid+1,e,idx,v);
+    }
+    tree[now].v=tree[tree[now].l].v+tree[tree[now].r].v;
+}
+
+int query(int node, int s, int e, int l, int r) {
+    if(l<=s && e<=r) return tree[node].v;
+    if(s>r || e<l) return 0;
+    int mid=s+e>>1;
+    return query(tree[node].l,s,mid,l,r) + query(tree[node].r,mid+1,e,l,r);
 }
