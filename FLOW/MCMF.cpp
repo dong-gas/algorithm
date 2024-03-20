@@ -1,5 +1,8 @@
 //O(Ef)
 //reference: https://github.com/koosaga/DeobureoMinkyuParty/blob/master/teamnote.pdf
+
+//to do: https://justicehui.github.io/hard-algorithm/2020/03/24/effective-mcmf/
+
 const ll N = 222, INF = 1e9;
 
 struct edge { ll to, cap, rev, cost; };
