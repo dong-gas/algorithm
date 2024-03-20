@@ -5,8 +5,6 @@ struct edge {
 };
 vector<edge> adj[N];
 
-ll n;
-ll a[N];
 ll dist[N], p[N], pe[N];
 bool inQ[N];
 
