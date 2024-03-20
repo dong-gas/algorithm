@@ -1,6 +1,5 @@
 //O(Ef)
-const ll N = 2020;
-
+const ll N = 2020, INF = 1e9;
 struct edge {
 	ll to, cap, rev, cost;
 };
