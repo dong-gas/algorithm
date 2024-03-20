@@ -1,9 +1,12 @@
 //O(min(ESqrt(V),fE))
-const int MAXN=1000,MAXM=1000;
+//reference: https://github.com/koosaga/DeobureoMinkyuParty
+
+const int MAXN = 1010, MAXM = 1010;
 int dis[MAXN],l[MAXN],r[MAXM],vis[MAXN];
 vector<int> adj[MAXN];
-void clear() { for(int i=1;i<=n;i++) adj[i].clear(); }
 void add_edge(int l,int r) {adj[l].push_back(r);}
+//add_edge(i, n+j) X
+//add_edge(i,j)    O
 
 bool bfs(int n){
     queue<int> q;
@@ -49,6 +52,7 @@ int match(int n){
 }
 
 //find minimum vertex cover (=이분매칭)
+//match함수로 이분매칭 돌리고 getcover 호출하면 됨.
 bool chk[MAXN + MAXM];
 void rdfs(int x, int n){
 	if(chk[x]) return;
@@ -63,7 +67,7 @@ vector<int> getcover(int n, int m){
 	memset(chk, 0, sizeof(chk));
 	for(int i=1; i<=n; i++) if(l[i] == -1) rdfs(i, n);
 	vector<int> v;
-	for(int i=1; i<=n; i++) if(!chk[i]) v.push_back(i);
-	for(int i=n+1; i<=n+m; i++) if(chk[i]) v.push_back(i);
+	for(int i=1; i<=n; i++) if(!chk[i]) v.push_back(i);    //A
+	for(int i=n+1; i<=n+m; i++) if(chk[i]) v.push_back(i); //B
 	return v;
 }
