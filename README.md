@@ -28,6 +28,7 @@ Trees
 * heavy-light decomposition
 * persistent segment tree
 * segment tree
+* ~~centroid decomposition~~
   
 Math
 * extended euclidean algorithm
