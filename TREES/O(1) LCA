@@ -1,0 +1,51 @@
+/*
+전처리 NlogN
+쿼리 O(1)
+*/
+
+const int NMAX = 100201;
+
+int n, q, ord;
+int depth[NMAX], idx[NMAX], log_2[2*NMAX], euler[2*NMAX],;
+pint dp[22][2*NMAX];
+vector<int> adj[NMAX];
+
+void dfs(int now, int papa=0) {
+    depth[now]=depth[papa]+1;
+    idx[now]=++ord;
+    euler[ord]=now;
+    for(int nxt:adj[now]) if(nxt != papa) {
+        dfs(nxt, now);
+        euler[++ord]=now;
+    }
+}
+
+void init() {
+    int j=-1;
+    for(int i=1;i<=ord;i++) {
+        if(1<<(j+1)==i) j++;
+        log_2[i]=j;
+    }
+    for(int i=1;i<=ord;i++) dp[0][i]={depth[euler[i]],euler[i]};
+    for(int j=1;j<22;j++) for(int i=1;i+(1<<(j-1))<=ord;i++) dp[j][i]=min(dp[j-1][i], dp[j-1][i+(1<<(j-1))]);
+}
+
+int get_lca(int u, int v) {
+    if(idx[u]>idx[v]) swap(u,v);
+    int len=log_2[idx[v]-idx[u]+1];
+    return min(dp[len][idx[u]], dp[len][idx[v]-(1<<len)+1]).second;
+}
+
+void solve() {
+    cin>>n;
+    for(int i=0;i<n-1;i++) {
+        int u, v; cin>>u>>v;
+        adj[u].emplace_back(v), adj[v].emplace_back(u);
+    }
+    dfs(1), init();
+    cin>>q;    
+    while(q --> 0) {
+        int u, v; cin>>u>>v;
+        cout<<get_lca(u,v)<<'\n';
+    }
+}
