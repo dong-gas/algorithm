@@ -28,7 +28,8 @@ Trees
 * heavy-light decomposition
 * persistent segment tree
 * segment tree
-* ~~centroid decomposition~~
+* centroid decomposition
+* O(1) LCA with O(NlogN) preprocessing
   
 Math
 * extended euclidean algorithm
