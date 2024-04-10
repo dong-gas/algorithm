@@ -2,8 +2,10 @@
 //TLE 나면 double로 gogo
 //boj.kr/11385(씽크스몰): double로 하면 틀림.
 //기본을 long double로 가고, 시간 터지면 double로 하자...
-typedef complex<double> base;
+
 #define double long double 
+typedef complex<double> base;
+
 void fft(vector <base>& a, bool invert)
 {
 	int n = sz(a);
