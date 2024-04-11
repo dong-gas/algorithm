@@ -52,3 +52,4 @@ Etc
 * ~~Mo's~~
 * ~~numbers of prime number less than p~~
 * Sieve of Eratosthenes
+* ~~rope~~
