@@ -54,6 +54,16 @@ int query(int u) {
 dnc 내에서 아래와 같이 O(N) 탐색도 가능. 전체 O(NlogN)
 Confuzzle
 */
+
+void dfs(int u, int p, int len, map<int,int>& nd) {
+    if(nd.find(color[u])==nd.end()) nd[color[u]]=len;
+    else nd[color[u]]=min(nd[color[u]],len);
+    for(int v:adj[u]) {
+        if(use[v] || v==p) continue;
+        dfs(v,u,len+1,nd);
+    }
+}
+
 void dnc(int u, int p=0) {
     int cent=get_cent(u,p,get_size(u,p));
     cent_papa[cent]=p;
