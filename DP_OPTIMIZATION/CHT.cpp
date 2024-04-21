@@ -1,5 +1,6 @@
 1. Online으로 Convex hull을 construct할 수 있는 구현체
 upper convex hull이므로, min을 원할 때는 m, k부호 반대로 넣고, -query(q)로 사용.
+* 2.와 다르게 기울기에 단조성 없어도 됨.
 /**
  * Author: Simon Lindholm
  * Date: 2017-04-20
@@ -46,6 +47,9 @@ struct LineContainer : multiset<Line, less<>> {
 /*----------------------------------------------------------------------------------------------*/    
 
 2. 내가 예전에 쓰던거...
+* dp[i] = min(dp[j] + b[j] * a[i]), j < i
+* b[j] >= b[j+1] 
+
 struct lin {
     ll a, b; //기울기, y절편
 };
