@@ -30,6 +30,7 @@ Trees
 * segment tree
 * centroid decomposition
 * O(1) LCA with O(NlogN) preprocessing
+* dynamic segment tree
   
 Math
 * extended euclidean algorithm
