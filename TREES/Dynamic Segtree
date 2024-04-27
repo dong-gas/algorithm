@@ -1,0 +1,72 @@
+1.
+typedef long long ll;
+struct Node{
+    Node *l, *r; //양쪽 자식
+    ll v; //구간 합
+    Node(){ l = r = NULL; v = 0; }
+} *root; //root 동적할당 필수!
+
+void update(Node *node, int s, int e, int x, int v){
+    if(s == e){ //리프 노드
+        node->v = v; return;
+    }
+    int m = s + e >> 1;
+    if(x <= m){
+      //왼쪽 자식이 없는 경우 동적 할당
+        if(!node->l) node->l = new Node();
+        update(node->l, s, m, x, v);
+    }else{
+        //오른쪽 자식이 없는 경우 동적 할당
+        if(!node->r) node->r = new Node();
+        update(node->r, m+1, e, x, v);
+    }
+    ll t1 = node->l ? node->l->v : 0;
+    ll t2 = node->r ? node->r->v : 0;
+    node->v = t1 + t2;
+}
+ll query(Node *node, int s, int e, int l, int r){
+    if(!node) return 0; //없는 노드
+    if(r < s || e < l) return 0;
+    if(l <= s && e <= r) return node->v;
+    int m = s + e >> 1;
+    return query(node->l, s, m, l, r) + query(node->r, m+1, e, l, r);
+}
+
+root=new Node(); 필요
+
+---------------------------------------------
+2.
+typedef long long ll;
+struct Node{
+    int l, r; //양쪽 자식 정점 인덱스
+    ll v; //구간 합
+    Node(){ l = r = -1; v = 0; }
+};
+Node nd[4040404]; //적당한 양 할당
+//nd[0]를 루트로 잡자.
+int pv = 1; //현재 pv개의 정점을 사용했음
+
+void update(int node, int s, int e, int x, int v){
+    if(s == e){
+        nd[node].v = v; return;
+    }
+    int m = s + e >> 1;
+    if(x <= m){
+        if(nd[node].l == -1) nd[node].l = pv++;
+        update(nd[node].l, s, m, x, v);
+    }else{
+        if(nd[node].r == -1) nd[node].r = pv++;
+        update(nd[node].r, m+1, e, x, v);
+    }
+    ll t1 = nd[node].l != -1 ? nd[nd[node].l].v : 0;
+    ll t2 = nd[node].r != -1 ? nd[nd[node].r].v : 0;
+    nd[node].v = t1 + t2;
+}
+
+ll query(int node, int s, int e, int l, int r){
+    if(node == -1) return 0;
+    if(r < s || e < l) return 0;
+    if(l <= s && e <= r) return nd[node].v;
+    int m = s + e >> 1;
+    return query(nd[node].l, s, m, l, r) + query(nd[node].r, m+1, e, l, r);
+}
