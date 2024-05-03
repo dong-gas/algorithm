@@ -1,6 +1,9 @@
+Line Container..
+Li Chao는 TREES 폴더에
+
 1. Online으로 Convex hull을 construct할 수 있는 구현체
 max값 찾을 때 쓰이는 템플릿이므로, min을 원할 때는 m, k부호 반대로 넣고, -query(q)로 사용.
-* 2.와 다르게 기울기에 단조성 없어도 됨.
+  2.와 다르게 기울기에 단조성 없어도 됨.
 /**
  * Author: Simon Lindholm
  * Date: 2017-04-20
