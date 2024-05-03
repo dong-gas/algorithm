@@ -1,0 +1,25 @@
+#include <bits/extc++.h>
+using namespace __gnu_pbds;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+ordered_set s;
+
+s.order_of_key(x): x보다 작은(미만) 원소의 개수
+s.find_by_order(y): y번째(0-based) 원소가 있는 iterator 반환 (0-based다. 즉, s.find_by_order(5)는 6번째 원소 반환)
+
+
+
+
+
+//멀티셋 필요하면....
+1. less -> less_equal
+typedef tree<ll, null_type, less_equal<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+
+2. erase 직접 구현
+void m_erase(ordered_set &OS, int val){
+    int index = OS.order_of_key(val);
+    ordered_set::iterator it = OS.find_by_order(index);
+    if(*it == val) OS.erase(it);
+}
+
+3. find()할 때 원하는 값 안나옴.
+  order_of_key로 더 작은 거 개수 세고, find_by_order로 그 위치 알아내서 일치하는지 비교하는 식으로 하자.
