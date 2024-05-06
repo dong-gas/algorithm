@@ -39,6 +39,7 @@ Math
 * number theoretic transform
 * bit convolution
 * miller_rabin + pollard rho
+* modulo int template
 
 Strings
 * hashing
