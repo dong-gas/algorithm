@@ -16,3 +16,4 @@ void solve() {
         if (r < i + a[i]) r = i + a[i], p = i;
     }
 }
+//a[i]: i를 중심으로 하는 팰린드롬 최대 길이
