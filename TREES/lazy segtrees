@@ -1,0 +1,102 @@
+/*
+1. 구간에 합 더하기, 구간 합 구하기
+2. 구간에 합 더하기, 구간 최소 구하기
+*/
+
+
+//1.
+//update: 구간에 합 더하기
+//query: 구간 합
+struct lazy_seg { 
+    vector<ll> tree, lazy;
+    void make_tree(ll sz) {
+        tree.resize(4*sz+4,0); //값은 알아서 잘..
+        lazy.resize(4*sz+4,0);
+    }
+    ll init(ll N, ll s, ll e) {
+    	  if (s == e) return tree[N] = arr[s];
+    	  ll mid = (s + e) / 2;
+    	  return tree[N] = init(2 * N, s, mid) + init(2 * N + 1, mid + 1, e);
+    }
+    void update_lazy(ll N, ll s, ll e) {
+        if (!lazy[N]) return;
+        tree[N] += (e - s + 1) * lazy[N];
+        if (s != e) {
+            lazy[2 * N] += lazy[N];
+            lazy[2 * N + 1] += lazy[N];
+        }
+        lazy[N] = 0;
+    }
+    void update(ll N, ll s, ll e, ll l, ll r, ll val) {
+        update_lazy(N, s, e);
+        if (l > e || r < s) return;
+        if (l <= s && e <= r) {
+            tree[N] += (e - s + 1) * val;
+            if (s != e) {
+                lazy[2 * N] += val;
+                lazy[2 * N + 1] += val;
+            }
+            return;
+        }
+        ll mid = (s + e) / 2;
+        update(N * 2, s, mid, l, r, val);
+        update(N * 2 + 1, mid + 1, e, l, r, val);
+        tree[N] = tree[2 * N] + tree[2 * N + 1
+    }
+    ll query(ll N, ll s, ll e, ll l, ll r) {
+        update_lazy(N, s, e);
+        if (l > e || r < s) return 0;
+        if (l <= s && e <= r) return tree[N];
+        ll mid = (s + e) / 2;
+        return query(2 * N, s, mid, l, r) + query(2 * N + 1, mid + 1, e, l, r);
+    }
+};
+
+
+//2.
+//update: 구간에 합 더하기
+//query: 구간에서 최솟값
+struct lazy_seg { 
+    vector<ll> tree, lazy;
+    void make_tree(ll sz) {
+        tree.resize(4*sz+4,0); //값은 알아서 잘..
+        lazy.resize(4*sz+4,0);
+    }
+    ll init(ll N, ll s, ll e) {
+    	  if (s == e) return tree[N] = arr[s];
+    	  ll mid = (s + e) / 2;
+    	  return tree[N] = min(init(2 * N, s, mid), init(2 * N + 1, mid + 1, e));
+    }
+    void update_lazy(ll N, ll s, ll e) {
+        if (!lazy[N]) return;
+        tree[N] += lazy[N];
+        if (s != e) {
+            lazy[2 * N] += lazy[N];
+            lazy[2 * N + 1] += lazy[N];
+        }
+        lazy[N] = 0;
+    }
+    void update(ll N, ll s, ll e, ll l, ll r, ll val) {
+        update_lazy(N, s, e);
+        if (l > e || r < s) return;
+        if (l <= s && e <= r) {
+            tree[N] += val;
+            if (s != e) {
+                lazy[2 * N] += val;
+                lazy[2 * N + 1] += val;
+            }
+            return;
+        }
+        ll mid = (s + e) / 2;
+        update(N * 2, s, mid, l, r, val);
+        update(N * 2 + 1, mid + 1, e, l, r, val);
+        tree[N] = min(tree[2 * N], tree[2 * N + 1]);
+    }
+    ll query(ll N, ll s, ll e, ll l, ll r) {
+        update_lazy(N, s, e);
+        if (l > e || r < s) return 1e9;
+        if (l <= s && e <= r) return tree[N];
+        ll mid = (s + e) / 2;
+        return min(query(2 * N, s, mid, l, r), query(2 * N + 1, mid + 1, e, l, r));
+    }
+};
