@@ -1,4 +1,8 @@
 //gumgood's code
+ll ccw(pt a, pt b, pt c) {
+    b = b - a, c = c - a;
+    return b.x * c.y - c.x * b.y;
+}
 
 pt o(0,0);
 sort(p.begin(), p.end(), [&](const pt &p,const pt &q){
