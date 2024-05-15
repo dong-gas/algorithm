@@ -1,64 +1,51 @@
 //https://justicehui.github.io/hard-algorithm/2020/01/24/hld/
-int sz[101010], dep[101010], par[101010], top[101010], in[101010], out[101010];
-vector<int> g[101010];   //inp를 단방향 그래프로 변환한 그래프
-vector<int> inp[101010]; //입력 / 양방향 그래프
-
-void dfs(int u, int p){
-  for(auto& v: inp[u]) {
-    if(v==p) continue;
-    dfs(v,u);
-    g[u].emplace_back(v);
-  }
-}
-
-void dfs1(int u){
-	sz[u] = 1;
-	for(auto &v : g[u]){
-		dep[v] = dep[u] + 1; par[v] = u;
-		dfs1(v); sz[u] += sz[v];
-		if(sz[v] > sz[g[u][0]]) swap(v, g[u][0]);
-	}
-}
-
-int pv;
-void dfs2(int u){
-	in[u] = ++pv;
-	for(auto v : g[u]){
-		top[v] = (v == g[u][0]) ? top[u] : v;
-		dfs2(v);
-	}
-	out[u] = pv;
-}
-
-int hld(int a, int b){
-    int ret = 0;
-    while(top[a] ^ top[b]){ //같은 체인이 아니면 진행
-        if(dep[top[a]] < dep[top[b]]) swap(a, b);
-        int st = top[a];
-        ret += query(in[st], in[a]);       //세그트리
-        a = par[st];
+struct Heavy_Light_Decomposition {
+    ll sz[NMAX], dep[NMAX], papa[NMAX], top[NMAX], in[NMAX], out[NMAX], pv;
+    vector<ll> inp[NMAX], g[NMAX];
+    //inp: 입력(양방향), g: inp를 단방향 그래프로 변환한 그래프
+    void dfs(int u, int p) {
+        for(auto& v: inp[u]) if(v!=p) {
+            dfs(v,u);
+            g[u].emplace_back(v);
+        }
     }
-    if(dep[a] > dep[b]) swap(a, b);
-    ret += query(in[a], in[b]);            //세그트리
-    return ret;
-}
+    void dfs1(int u) {
+        sz[u]=1;
+        for(auto &v: g[u]) {
+            dep[v]=dep[u]+1, papa[v]=u;
+            dfs1(v), sz[u]+=sz[v];
+            if(sz[v]>sz[g[u][0]]) swap(v, g[u][0]);
+        }
+    }
+    void dfs2(int u) {
+        in[u]=++pv;
+        for(auto v:g[u]) {
+            top[v]=(v==g[u][0])?top[u]:v;
+            dfs2(v);
+        }
+        out[u]=pv;
+    }
+    void update(int u, int val) {
+        seg.update(in[u], val);
+    }
+    ll query(int u, int v) {
+        ll ret=0;
+        while(top[u] ^ top[v]) {
+            if(dep[top[u]]<dep[top[v]]) swap(u,v);
+            int st=top[u];
+            ret+=seg.query(in[st], in[u]);
+            u=papa[st];
+        }
+        if(dep[u]>dep[v]) swap(u,v);
+        ret+=seg.query(in[u], in[v]);
+        return ret;
+    }
+} hld;
 
-int main(){
-    cin.tie(0)->sync_with_stdio(0);
-    int n, q; cin >> n >> q; //정점 개수, 쿼리 개수
-    for(int i=1; i<n; i++){
-        int s, e; cin >> s >> e;
-        inp[s].push_back(e);
-        inp[e].push_back(s);
-    }
-    dfs(1,0);    //양방향 그래프를 단방향 그래프로 변경
-    dfs1(1);   //깊이, 부모, 크기 저장 + 맨 앞을 heavy로 수정
-    dfs2(1);   //오일러투어 + 각 체인의 top 원소 저장
-    while(q--){
-        //1 v w : update v w
-        //2 s e : query s e
-        int op, a, b; cin >> op >> a >> b;
-        if(op == 1) update(in[a], b);      //update할 때, euler tour in에 해야하는 것 주의
-        else cout << hld(a, b) << "\n";    //hld 호출할 때는 in[a], in[b]말고 그냥 a, b로 호출해야 하는 것 주의
-    }
-}
+/*
+입력 그래프 inp에 받기.
+dfs(1,0), dfs1(1), dfs2(1);
+//in신경 안 써도 됨. hld 템플릿에서 변환해서 함.
+hld.update(u, val);
+hld.query(u, v);
+*/
