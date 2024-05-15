@@ -35,11 +35,11 @@ int hld(int a, int b){
     while(top[a] ^ top[b]){ //같은 체인이 아니면 진행
         if(dep[top[a]] < dep[top[b]]) swap(a, b);
         int st = top[a];
-        ret += query(in[st], in[a]);
+        ret += query(in[st], in[a]);       //세그트리
         a = par[st];
     }
     if(dep[a] > dep[b]) swap(a, b);
-    ret += query(in[a], in[b]);
+    ret += query(in[a], in[b]);            //세그트리
     return ret;
 }
 
@@ -59,6 +59,6 @@ int main(){
         //2 s e : query s e
         int op, a, b; cin >> op >> a >> b;
         if(op == 1) update(in[a], b);      //update할 때, euler tour in에 해야하는 것 주의
-        else cout << hld(a, b) << "\n";
+        else cout << hld(a, b) << "\n";    //hld 호출할 때는 in[a], in[b]말고 그냥 a, b로 호출해야 하는 것 주의
     }
 }
