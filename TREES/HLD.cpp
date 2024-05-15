@@ -47,7 +47,7 @@ struct Heavy_Light_Decomposition {
 
 /*
 입력 그래프는 g가 아닌 inp에 받기.
-hld.init();
+hld.init(); <- hld.inp에 그래프 입력 받은 뒤에 호출해야 함.
 hld.update(u, val);
 hld.query(u, v);
 in신경 안 써도 됨. hld 템플릿에서 변환해서 함.
