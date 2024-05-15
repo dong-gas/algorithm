@@ -41,7 +41,7 @@ struct lazy_seg {
         ll mid = (s + e) / 2;
         update(N * 2, s, mid, l, r, val);
         update(N * 2 + 1, mid + 1, e, l, r, val);
-        tree[N] = tree[2 * N] + tree[2 * N + 1
+        tree[N] = tree[2 * N] + tree[2 * N + 1];
     }
     ll query(ll N, ll s, ll e, ll l, ll r) {
         update_lazy(N, s, e);
