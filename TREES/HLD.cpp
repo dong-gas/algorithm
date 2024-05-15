@@ -51,9 +51,9 @@ int main(){
         inp[s].push_back(e);
         inp[e].push_back(s);
     }
-    dfs();    //양방향 그래프를 단방향 그래프로 변경
-    dfs1();   //깊이, 부모, 크기 저장 + 맨 앞을 heavy로 수정
-    dfs2();   //오일러투어 + 각 체인의 top 원소 저장
+    dfs(1,0);    //양방향 그래프를 단방향 그래프로 변경
+    dfs1(1);   //깊이, 부모, 크기 저장 + 맨 앞을 heavy로 수정
+    dfs2(1);   //오일러투어 + 각 체인의 top 원소 저장
     while(q--){
         //1 v w : update v w
         //2 s e : query s e
