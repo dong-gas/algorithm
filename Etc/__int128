@@ -1,3 +1,6 @@
+//코포에서 G++20(64bit)로 해야 함.
+//int128쓸 땐 bits/stdc++.h로 해야 함. extc++.h로 하면 컴파일에러...
+
 __int128 read() {
     __int128 x = 0, f = 1;
     char ch = getchar();
