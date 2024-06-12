@@ -11,7 +11,7 @@ PBDS<ll> s;
 1. erase 직접 구현
 void m_erase(multiPBDS &OS, int val){
     int index = OS.order_of_key(val);
-    ordered_set::iterator it = OS.find_by_order(index);
+    multiPBDS::iterator it = OS.find_by_order(index);
     if(*it == val) OS.erase(it);
 }
 
