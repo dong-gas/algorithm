@@ -1,7 +1,7 @@
 #include <bits/extc++.h>
 using namespace __gnu_pbds;
-template<class T> using PBDS = tree<T, null_type, less<T>, rb_tree_tab, tree_order_statistics_node_update>;
-template<class T> using multiPBDS = tree<T, null_type, less_equal<T>, rb_tree_tab, tree_order_statistics_node_update>;
+template<class T> using PBDS = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template<class T> using multiPBDS = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 PBDS<ll> s;
 
 //s.order_of_key(x): x보다 작은(미만) 원소의 개수
