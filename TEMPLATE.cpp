@@ -12,7 +12,9 @@ typedef long long ll;
 typedef unsigned long long ull;
 typedef pair<ll, ll> pll;
 typedef pair<int, int> pint;
-typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+
+using namespace __gnu_pbds;
+template<class T> using PBDS = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
 void solve() {
     
