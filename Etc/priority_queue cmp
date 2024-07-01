@@ -2,6 +2,5 @@ struct cmp {
     bool operator()(int x, int y) {
         return a>b;
     }
-}
-std::priority_queue<int, vector<int>, cmp> pq;
-//작은 거부터 나온다.
+};
+std::priority_queue<int, vector<int>, cmp> pq;   //작은 거부터 나오는 pq
