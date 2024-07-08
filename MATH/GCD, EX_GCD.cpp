@@ -20,3 +20,9 @@ ll ex_gcd(ll a, ll b, ll& x, ll& y) {
     }*/
     return ret;
 }
+
+===
+ll gcd(ll x, ll y) {
+	if (!y)return x;
+	return gcd(y, x % y);
+};
