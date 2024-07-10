@@ -1,4 +1,9 @@
 #include <bits/extc++.h>
+/*
+bits/extc++.h 인식 못 하면... (ex. SCPC)
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+*/
 using namespace __gnu_pbds;
 template<class T> using PBDS = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 template<class T> using multiPBDS = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
