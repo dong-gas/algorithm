@@ -1,29 +1,33 @@
-const int N = 1e5;  // limit for array size
-int n;  // array size
-int t[2 * N];
+template<typename T> struct seg {
+	ll n; //1-based로 쓰고 싶으면 1 여유 있게
+	T it; //항등원
+	vector<T> t;
+	T(*merge)(T, T);
+	seg(ll N, T IT, T(*_merge)(T, T)) {
+		n=N, it=IT, merge=_merge;
+		t.resize(2*n, it);
+	}
+	void update(ll p, T val) {
+		p += n;		
+		for (t[p] = val; p > 1; p >>= 1) {//기존 거랑 비교해서 바꿔야 하면 t[p] = merge(val, t[p]) or if문 등의 연산으로 바꾸기
+			if(p&1) t[p>>1] = merge(t[p^1], t[p]);
+			else t[p>>1] = merge(t[p], t[p^1]);
+		}
+	}
+	T query(T l, T r) {//query on interval [l, r)
+		T lret=it, rret=it;
+		for(l += n, r += n; l < r; l >>= 1, r >>= 1) {
+			if(l&1) lret = merge(lret, t[l++]);
+			if(r&1) rret = merge(t[--r], rret);
+		}
+		return merge(lret, rret);
+	}
+};
 
-void build() {  // build the tree
-  for (int i = n - 1; i > 0; --i) t[i] = t[i<<1] + t[i<<1|1];
-}
+/*
+ex1) 1~n을 관리하는 합 seg
+seg<ll> s(n+1,0,[](ll a,ll b){return a+b;});
 
-void modify(int p, int value) {  // set value at position p
-  for (t[p += n] = value; p > 1; p >>= 1) t[p>>1] = t[p] + t[p^1];
-}
-
-int query(int l, int r) {  // sum on interval [l, r)
-  int res = 0;
-  for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
-    if (l&1) res += t[l++];
-    if (r&1) res += t[--r];
-  }
-  return res;
-}
-
-int main() {
-  scanf("%d", &n);
-  for (int i = 0; i < n; ++i) scanf("%d", t + n + i);
-  build();
-  modify(0, 1);
-  printf("%d\n", query(3, 11));
-  return 0;
-}
+ex2) 0~n-1을 관리하는 min seg
+seg<ll> s(n, inf, [](ll a,ll b){return min(a,b);});
+*/
