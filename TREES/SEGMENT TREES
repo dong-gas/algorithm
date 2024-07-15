@@ -5,8 +5,7 @@ template<typename T> struct seg {
 	T(*merge)(T, T);
 	seg(ll N, T IT, T(*_merge)(T, T)): n(N), it(IT), merge(_merge) { t.resize(N<<1, it); }					
 	void update(ll p, T val) {
-		p += n;		
-		for (t[p] = val; p > 1; p >>= 1) {//기존 거랑 비교해서 바꿔야 하면 t[p] = merge(val, t[p])
+		for (t[p += n] = val; p > 1; p >>= 1) {//기존 거랑 비교해서 바꿔야 하면 t[p] = merge(val, t[p])
 			if(p&1) t[p>>1] = merge(t[p^1], t[p]);
 			else t[p>>1] = merge(t[p], t[p^1]);
 		}
