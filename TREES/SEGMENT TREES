@@ -1,15 +1,12 @@
 template<typename T> struct seg {
-	ll n; //1-based로 쓰고 싶으면 1 여유 있게
+	ll n; //크기 (1-based로 쓰려면 1크게 넣어야 함)
 	T it; //항등원
 	vector<T> t;
 	T(*merge)(T, T);
-	seg(ll N, T IT, T(*_merge)(T, T)) {
-		n=N, it=IT, merge=_merge;
-		t.resize(2*n, it);
-	}
+	seg(ll N, T IT, T(*_merge)(T, T)): n(N), it(IT), merge(_merge) { t.resize(N<<1, it); }					
 	void update(ll p, T val) {
 		p += n;		
-		for (t[p] = val; p > 1; p >>= 1) {//기존 거랑 비교해서 바꿔야 하면 t[p] = merge(val, t[p]) or if문 등의 연산으로 바꾸기
+		for (t[p] = val; p > 1; p >>= 1) {//기존 거랑 비교해서 바꿔야 하면 t[p] = merge(val, t[p])
 			if(p&1) t[p>>1] = merge(t[p^1], t[p]);
 			else t[p>>1] = merge(t[p], t[p^1]);
 		}
