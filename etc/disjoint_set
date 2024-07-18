@@ -1,0 +1,19 @@
+struct disjoint_set{
+    vector<int> papa, height;
+    void init(int n) {
+        papa.resize(n+1,-1);
+        height.resize(n+1,0);        
+    }
+    ll Find(ll u) {
+        if(papa[u]==-1) return u;
+        return papa[u]=Find(papa[u]);
+    }
+    bool Union(ll u, ll v) {
+        u=Find(u), v=Find(v);
+        if(u==v) return false;
+        if(height[u]<height[v]) swap(u,v);
+        papa[v]=u;
+        if(height[u]==height[v]) height[u]++;
+        return true;
+    }
+} djs;
