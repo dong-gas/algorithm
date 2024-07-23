@@ -1,4 +1,5 @@
 // O(min(fE, V^2E))
+// 모든 edge의 capacity 용량이 0 혹은 1이면 O(min(V^(2/3), E^(1/2)))
 //reference: https://github.com/koosaga/DeobureoMinkyuParty
 const int MAXN = 555;
 struct edge {
