@@ -1,3 +1,4 @@
+//reference: https://github.com/koosaga/DeobureoMinkyuParty/blob/master/teamnote.pdf
 //O(k(logN)^3)
 //k: number of test
 using ull = unsigned long long;
