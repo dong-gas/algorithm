@@ -47,6 +47,47 @@ struct LineContainer : multiset<Line, less<>> {
 	}
 };
 
+//최대가 되는 인덱스 출력해야 할 때
+//근데, 그 인덱스가 여러 곳일 때 아무거나 출력하는 거면 ㄱㅊ은데, 젤 작은거 or 젤 큰 거처럼 기준 있으면 어케해야 할 지 몰겠다...
+struct Line {
+	mutable ld k, m, p;
+	mutable ll idx;	
+	bool operator<(const Line& o) const { return k < o.k; }
+	bool operator<(ld x) const { return p < x; }
+};
+
+const ld inf = 1/.0;
+
+struct LineContainer : multiset<Line, less<>> {
+	// (for doubles, use inf = 1/.0, div(a,b) = a/b)
+	//double이면 inf를 전역으로 빼서 const double inf = 1/.0; 하면 됨
+	//ll -> double로 바꿔서 쓰면 됨.
+	//static const ll inf = LLONG_MAX;
+	ld div(ld a, ld b) { // floored division
+		//return a / b - ((a ^ b) < 0 && a % b); 
+		return a/b;
+	}
+	bool isect(iterator x, iterator y) {
+		if (y == end()) return x->p = inf, 0;
+		if (x->k == y->k) x->p = x->m > y->m ? inf : -inf;
+		else x->p = div(y->m - x->m, x->k - y->k);
+		return x->p >= y->p;
+	}
+	void add(ld k, ld m, ll idx) {
+		auto z = insert({k, m, 0, idx}), y = z++, x = y;
+		while (isect(y, z)) z = erase(z);
+		if (x != begin() && isect(--x, y)) isect(x, y = erase(y));
+		while ((y = x) != begin() && (--x)->p >= y->p)
+			isect(x, erase(y));
+	}
+	ll query(ld x) {
+		assert(!empty());
+		auto l = *lower_bound(x);
+		//cout<<l.k<<' '<<x<<' '<<l.m<<' '<<l.idx<<' '<<l.k*x+l.m<<endl;
+		return l.idx;
+	}
+} s;
+
 /*----------------------------------------------------------------------------------------------*/    
 
 2. 내가 예전에 쓰던거...
