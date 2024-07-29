@@ -34,6 +34,15 @@ ll ccw(pt a, pt b, pt c) {
     return b.x * c.y - c.x * b.y;
 }
 
+//외심 (실수)
+pt circumcenter(pt a, pt b, pt c) { 
+    ld d=(2.0*(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y)));
+    pt m;
+    m.x=((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y+c.y)*(a.y-b.y))/d;
+    m.y=((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y+c.y)*(b.x-a.x))/d;
+    return m;
+}
+
 //여기부터 wbcho0504 code... thx!
 
 // 선분 교차 판정
