@@ -4,6 +4,7 @@
 4. distance
 5. priority_queue cmp
 6. random
+7. mo's (여러분 거 ㄱ)
 
 1. pbds
 #include <bits/extc++.h>
@@ -112,3 +113,47 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 shuffle(all(v), rng); // shuffle randomly!
 cout<<rng();     //random [0, 2^32-1]
 int x=rng()%100; //[0,99]
+
+7. mo's
+이거 따로 정리해둔 게 없어서 걍 인터넷 거 복붙만 해둘게요... 코드 있으시면 그걸로 ㄱㄱ
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+int sqrtN;
+struct Query{
+	int idx, s, e;
+	bool operator < (Query &x){
+		if(s/sqrtN != x.s/sqrtN) return s/sqrtN < x.s/sqrtN;
+		return e < x.e;
+	}
+};
+vector<Query> query;
+vector<int> v;
+ll res = 0;
+ll ans[101010];
+int main(){
+	ios_base::sync_with_stdio(0); cin.tie(0);
+	int n, q; cin >> n >> q; sqrtN = sqrt(n);
+	v.resize(n+1);
+	for(int i=1; i<=n; i++){
+		cin >> v[i];
+	}
+	for(int i=0; i<q; i++){
+		int s, e; cin >> s >> e;
+		query.push_back({i, s, e});
+	}
+	sort(query.begin(), query.end());
+	int s = query[0].s, e = query[0].e;
+	for(int i=s; i<=e; i++){
+		res += v[i];
+	}
+	ans[query[0].idx] = res;
+	for(int i=1; i<q; i++){
+		while(s < query[i].s) res -= v[s++];
+		while(s > query[i].s) res += v[--s];
+		while(e < query[i].e) res += v[++e];
+		while(e > query[i].e) res -= v[e--];
+		ans[query[i].idx] = res;
+	}
+	for(int i=0; i<q; i++) cout << ans[i] << "\n";
+}
