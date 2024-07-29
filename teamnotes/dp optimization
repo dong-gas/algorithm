@@ -1,0 +1,100 @@
+1. divide and conquer optimization
+//if cost is monge C(a,c)+C(b,d)<=C(a,d)+C(b,c), a<=b<=c<=d
+//or if monoticity opt(i,j)<=opt(i,j+1)
+void f(int i,int s, int e, int optl, int optr) {
+	//want to get dp[i][s~e]
+	if(s>e) return;
+	int m=s+e>>1;
+	ll ret=1e18, opt=optl;
+	for(ll j=optl;j<=optr;j++) {
+		ll now=dp[i-1][j]+(a[m]-a[j])*(m-j);
+		if(now<ret) {
+			ret=now;
+			opt=j;
+		}
+	}
+	dp[i][m]=ret;
+	f(i,s,m-1,optl,opt), f(i,m+1,e,opt,optr);
+}
+
+2. Li Chao Tree
+const ll inf = 2e18;
+struct Line{
+	ll a, b;
+	ll get(ll x){ return a * x + b; }
+};
+struct Node{
+	int l, r; //child
+	ll s, e; //range
+	Line line;
+};
+struct Li_Chao{
+	vector<Node> tree;
+	void init(ll s, ll e){ tree.push_back({ -1, -1, s, e, { 0, -inf } }); }
+	void update(int node, Line v){
+		ll s = tree[node].s, e = tree[node].e;
+		ll m = s + e >> 1;
+		Line low = tree[node].line, high = v;
+		if (low.get(s) > high.get(s)) swap(low, high);
+		if (low.get(e) <= high.get(e)){
+			tree[node].line = high; return;
+		}
+		if (low.get(m) < high.get(m)){
+			tree[node].line = high;
+			if (tree[node].r == -1){
+				tree[node].r = tree.size();
+				tree.push_back({ -1, -1, m + 1, e, { 0, -inf } });
+			}
+			update(tree[node].r, low);
+		}
+		else{
+			tree[node].line = low;
+			if (tree[node].l == -1){
+				tree[node].l = tree.size();
+				tree.push_back({ -1, -1, s, m, { 0, -inf } });
+			}
+			update(tree[node].l, high);
+		}
+	}
+	ll query(int node, ll x){
+		if (node == -1) return -inf;
+		ll s = tree[node].s, e = tree[node].e;
+		ll m = s + e >> 1;
+		if (x <= m) return max(tree[node].line.get(x), query(tree[node].l, x));
+		else return max(tree[node].line.get(x), query(tree[node].r, x));
+	}
+} seg;
+
+3. Line Container
+//max query.. if you want min query, use it with m -> -m, k -> -k, query(q) -> -query(q).
+struct Line {
+	mutable ll k, m, p;
+	bool operator<(const Line& o) const { return k < o.k; }
+	bool operator<(ll x) const { return p < x; }
+};
+struct LineContainer : multiset<Line, less<>> {
+	// (for doubles, use inf = 1/.0, div(a,b) = a/b)
+	// (for doubles, const double inf = 1/.0;)
+	// (for doubles, ll -> double)
+	static const ll inf = LLONG_MAX;
+	ll div(ll a, ll b) { // floored division
+		return a / b - ((a ^ b) < 0 && a % b); }
+	bool isect(iterator x, iterator y) {
+		if (y == end()) return x->p = inf, 0;
+		if (x->k == y->k) x->p = x->m > y->m ? inf : -inf;
+		else x->p = div(y->m - x->m, x->k - y->k);
+		return x->p >= y->p;
+	}
+	void add(ll k, ll m) {
+		auto z = insert({k, m, 0}), y = z++, x = y;
+		while (isect(y, z)) z = erase(z);
+		if (x != begin() && isect(--x, y)) isect(x, y = erase(y));
+		while ((y = x) != begin() && (--x)->p >= y->p)
+			isect(x, erase(y));
+	}
+	ll query(ll x) {
+		assert(!empty());
+		auto l = *lower_bound(x);
+		return l.k * x + l.m;
+	}
+};
