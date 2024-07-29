@@ -1,0 +1,114 @@
+1. pbds
+2. int128
+3. degree sequence
+4. distance
+5. priority_queue cmp
+6. random
+
+1. pbds
+#include <bits/extc++.h>
+/*
+if error with <bits/extc++.h>...
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+*/
+using namespace __gnu_pbds;
+template<class T> using PBDS = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+template<class T> using multiPBDS = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
+PBDS<ll> s;
+//s.order_of_key(x): number of less than x
+//s.find_by_order(y): return yth element iterator (0-based).
+//s={1, 2, 4, 6, 11} -> *s.find_by_order(2) -> 4
+//multiPBDS
+(1) use m_erase instead of erase
+void m_erase(multiPBDS &OS, int val){
+    int index = OS.order_of_key(val);
+    multiPBDS::iterator it = OS.find_by_order(index);
+    if(*it == val) OS.erase(it);
+}
+(2) find(x)
+count! number of less than x with order_of_key := p
+check! find_by_order(p) == x
+
+
+2. int128
+이거 쓰는 거 있으면 제 거 말고 그거 넣는 게 좋을 거 같긴 함...
+그래서 걍 한글 주석 그대로 냅둘게요..
+//코포에서 G++20(64bit)로 해야 함.
+//use bits/stdc++.h (extc++.h cause error)
+//int128말고 다른 거 출력할 때 printf쓰자... 
+//int128은 아래 함수 사용 or ull로 바꿔서 출력
+__int128 read() {
+    __int128 x = 0, f = 1;
+    char ch = getchar();
+    while (ch < '0' || ch > '9') {
+        if (ch == '-') f = -1;
+        ch = getchar();
+    }
+    while (ch >= '0' && ch <= '9') {
+        x = x * 10 + ch - '0';
+        ch = getchar();
+    }
+    return x * f;
+}
+void print(__int128 x) {
+    if (x < 0) {
+        putchar('-');
+        x = -x;
+    }
+    if (x > 9) print(x / 10);
+    putchar(x % 10 + '0');
+}
+bool cmp(__int128 x, __int128 y) { return x > y; }
+__int128 a=read();
+print(a);
+cout<<'\n';
+
+
+3. degree sequence
+영어로 바꾸기 귀찮네요....
+이거 만족하면 차수열 만들기 가능.
+요약)
+d1>=...>=dn일 때 1, 2 만족하면 차수열 만들기 가능
+
+1. d1+...+dn이 짝수여야 함.
+2. 모든 k에 대해
+d1+...+dk <= k*(k-1) + min(d_k+1,k)+...+min(d_n,k)
+을 만족해야 함.
+================================================================================
+실제 구성하라고 시키면
+1. 그냥 그래프
+6 4 4 3 3 2 2
+이런 식이면
+젤 큰 6을 하나씩 매칭
+0 3 3 2 2 1 1
+0 0 2 1 1 1 1 
+...
+반복...
+되는지 안되는지는 맨 위에 정리 쓰자.
+2. 트리 (특수한 경우다.)
+합이 2n-2여야 함.
+반대로 합이 2n-2면 무조건 가능.
+구성) 리프를 리프 아닌 거랑 연결 <- 반복
+
+4. distance
+max(|x|,|y|)= |x+y|/2 + |x-y|/2
+min(|x|,|y|) = |x|+|y|-max(|x|,|y|) = |x|+|y| - (|x+y|/2 + |x-y|/2)
+
+manhatten(taxi) -> 45 rotate -> chebyshev
+|x1-x2|+|y1-y2| -> max(|x1-x2|, |y1-y2|)
+(x,y)->(x+y,x-y)
+
+5. priority_queue cmp 
+struct cmp {
+    bool operator()(int x, int y) {
+        return a>b;
+    }
+};
+std::priority_queue<int, vector<int>, cmp> pq;   //min heap
+
+6. random
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+shuffle(all(v), rng); // shuffle randomly!
+cout<<rng();     //random [0, 2^32-1]
+int x=rng()%100; //[0,99]
