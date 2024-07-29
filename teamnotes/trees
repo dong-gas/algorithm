@@ -1,0 +1,294 @@
+1. centroid
+2. heavy-light decomposition
+3. O(1) LCA with O(NlogN) preprocessing
+4. basic segment trees
+5. dynamic segment trees
+6. segment trees with lazy propagation
+7. persistent segment trees
+
+1. centroid
+int sz[NMAX], use[NMAX], cent_papa[NMAX];
+int get_size(int u, int p=0) {
+    sz[u]=1;
+    for(int v:adj[u]) {
+        if(use[v] || p==v) continue;
+        sz[u]+=get_size(v,u);
+    }
+    return sz[u];
+}
+int get_cent(int u, int p, int cnt) {
+    for(int v:adj[u]) {
+        if(use[v] || v==p) continue;
+        if(sz[v]>cnt/2) return get_cent(v,u,cnt);
+    }
+    return u;
+}
+void dnc(int u, int p=0) {//p: before cent
+    int cent=get_cent(u,p,get_size(u,p));
+    cent_papa[cent]=p;
+    use[cent]=1;
+    for(int v:adj[cent]) if(!use[v]) dnc(v,cent);
+}
+
+/*
+node update, node query -> you need to update all of your centroid ancestor
+property: u-v route must pass u's centroid ancestor 
+*/
+void update(int u) {
+    color[u]^=1;
+    int now=u;
+    do {
+        int dist=get_dist(now,u);
+        if(color[u]) s[now].insert(dist);
+        else s[now].erase(s[now].find(dist));
+        now=cent_papa[now];
+    } while(now!=0);    
+}
+int query(int u) {
+    int now=u, ret=1e9;
+    do {        
+        if(!s[now].empty()) ret=min(ret, get_dist(u,now) + *s[now].begin());
+        now=cent_papa[now];        
+    } while(now!=0);
+    return (ret<1e9) ? ret : -1;
+}
+
+2. heavy-light decomposition
+/*
+you need read input on g (not inp)
+you need to call hld.init() after convert g -> inp 
+hld.update(u, val);
+hld.query(u, v);
+you don't need concern in[u] or in[v], because template do that
+*/
+struct Heavy_Light_Decomposition {
+    ll sz[NMAX], dep[NMAX], papa[NMAX], top[NMAX], in[NMAX], out[NMAX], pv;
+    vector<ll> inp[NMAX], g[NMAX];
+    //inp: input graph(bidrectional), g: convert inp to one-way graph
+    void init() {
+        dfs(1,0), dfs1(1), dfs2(1);
+    }
+    void dfs(int u, int p) {
+        for(auto& v: inp[u]) if(v!=p) {
+            dfs(v,u);
+            g[u].emplace_back(v);
+        }
+    }
+    void dfs1(int u) {
+        sz[u]=1;
+        for(auto &v: g[u]) {
+            dep[v]=dep[u]+1, papa[v]=u;
+            dfs1(v), sz[u]+=sz[v];
+            if(sz[v]>sz[g[u][0]]) swap(v, g[u][0]);
+        }
+    }
+    void dfs2(int u) {
+        in[u]=++pv;
+        for(auto v:g[u]) {
+            top[v]=(v==g[u][0])?top[u]:v;
+            dfs2(v);
+        }
+        out[u]=pv;
+    }
+    void update(int u, int val) {
+        seg.update(in[u], val);                  
+    }
+    ll query(int u, int v) {
+        ll ret=0;
+        while(top[u] ^ top[v]) {
+            if(dep[top[u]]<dep[top[v]]) swap(u,v);
+            int st=top[u];
+            ret+=seg.query(in[st], in[u]);     
+            u=papa[st];
+        }
+        if(dep[u]>dep[v]) swap(u,v);
+        ret+=seg.query(in[u], in[v]);            
+        return ret;
+    }
+} hld;
+
+3. O(1) LCA with O(NlogN) preprocessing
+const int NMAX = 100201;
+int n, q, ord;
+int depth[NMAX], idx[NMAX], log_2[2*NMAX], euler[2*NMAX];
+pint dp[22][2*NMAX];
+vector<int> adj[NMAX];
+void dfs(int now, int papa=0) {
+    depth[now]=depth[papa]+1;
+    idx[now]=++ord;
+    euler[ord]=now;
+    for(int nxt:adj[now]) if(nxt != papa) {
+        dfs(nxt, now);
+        euler[++ord]=now;
+    }
+}
+void init() {
+    int j=-1;
+    for(int i=1;i<=ord;i++) {
+        if(1<<(j+1)==i) j++;
+        log_2[i]=j;
+    }
+    for(int i=1;i<=ord;i++) dp[0][i]={depth[euler[i]],euler[i]};
+    for(int j=1;j<22;j++) for(int i=1;i+(1<<(j-1))<=ord;i++) dp[j][i]=min(dp[j-1][i], dp[j-1][i+(1<<(j-1))]);
+}
+int get_lca(int u, int v) {
+    int l=idx[u], r=idx[v];
+    if(l>r) swap(l,r);
+    int len=log_2[r-l+1];
+    return min(dp[len][l], dp[len][r-(1<<len)+1]).second;
+}
+void solve() {
+    cin>>n;
+    for(int i=0;i<n-1;i++) {
+        int u, v; cin>>u>>v;
+        adj[u].emplace_back(v), adj[v].emplace_back(u);
+    }
+    dfs(1), init();
+    cin>>q;    
+    while(q --> 0) {
+        int u, v; cin>>u>>v;
+        cout<<get_lca(u,v)<<'\n';
+    }
+}
+
+4. basic segment trees
+//seg<ll> s(n+1,0,[](ll a,ll b){return a+b;}); //1~n sum seg
+//seg<ll> s(n, inf, [](ll a,ll b){return min(a,b);}); //0~n-1 min seg
+template<typename T> struct seg {
+	ll n; //size
+	T id; //identity
+	vector<T> t;
+	T(*merge)(T, T);
+	seg(ll N, T ID, T(*_merge)(T, T)): n(N), id(ID), merge(_merge) { t.resize(N<<1, id); }					
+	void update(ll p, T val) {
+		for (t[p+=n] = val; p > 1; p >>= 1) {//if you want change value, t[p+=n] = newval
+			if(p&1) t[p>>1] = merge(t[p^1], t[p]);
+			else t[p>>1] = merge(t[p], t[p^1]);
+		}
+	}
+	T query(ll l, ll r) {//query on interval [l, r)
+		T lret=id, rret=id;
+		for(l += n, r += n; l < r; l >>= 1, r >>= 1) {
+			if(l&1) lret = merge(lret, t[l++]);
+			if(r&1) rret = merge(t[--r], rret);
+		}
+		return merge(lret, rret);
+	}
+};
+
+5. dynamic segment trees
+struct Node{
+    int l, r; //index of leftson, rightson
+    ll v; //sum of interval
+    Node(){ l = r = -1; v = 0; }
+};
+Node nd[4040404]; //enough size
+//root: nd[0]
+int pv = 1; //pv node already used..
+void update(int node, int s, int e, int x, int v){
+    if(s == e){
+        nd[node].v = v; return;
+    }
+    int m = s + e >> 1;
+    if(x <= m){
+        if(nd[node].l == -1) nd[node].l = pv++;
+        update(nd[node].l, s, m, x, v);
+    }else{
+        if(nd[node].r == -1) nd[node].r = pv++;
+        update(nd[node].r, m+1, e, x, v);
+    }
+    ll t1 = nd[node].l != -1 ? nd[nd[node].l].v : 0;
+    ll t2 = nd[node].r != -1 ? nd[nd[node].r].v : 0;
+    nd[node].v = t1 + t2;
+}
+ll query(int node, int s, int e, int l, int r){
+    if(node == -1) return 0;
+    if(r < s || e < l) return 0;
+    if(l <= s && e <= r) return nd[node].v;
+    int m = s + e >> 1;
+    return query(nd[node].l, s, m, l, r) + query(nd[node].r, m+1, e, l, r);
+}
+
+6. segment trees with lazy propagation
+struct lazy_seg { 
+    vector<ll> tree, lazy;
+    void make_tree(ll sz) {
+        tree.resize(4*sz+4,0); //check initial value!
+        lazy.resize(4*sz+4,0);
+    }
+    ll init(ll N, ll s, ll e) {
+    	  if (s == e) return tree[N] = arr[s];
+    	  ll mid = (s + e) / 2;
+    	  return tree[N] = init(2 * N, s, mid) + init(2 * N + 1, mid + 1, e);
+    }
+    void update_lazy(ll N, ll s, ll e) {
+        if (!lazy[N]) return;
+        tree[N] += (e - s + 1) * lazy[N];
+        if (s != e) {
+            lazy[2 * N] += lazy[N];
+            lazy[2 * N + 1] += lazy[N];
+        }
+        lazy[N] = 0;
+    }
+    void update(ll N, ll s, ll e, ll l, ll r, ll val) {
+        update_lazy(N, s, e);
+        if (l > e || r < s) return;
+        if (l <= s && e <= r) {
+            tree[N] += (e - s + 1) * val;
+            if (s != e) {
+                lazy[2 * N] += val;
+                lazy[2 * N + 1] += val;
+            }
+            return;
+        }
+        ll mid = (s + e) / 2;
+        update(N * 2, s, mid, l, r, val);
+        update(N * 2 + 1, mid + 1, e, l, r, val);
+        tree[N] = tree[2 * N] + tree[2 * N + 1];
+    }
+    ll query(ll N, ll s, ll e, ll l, ll r) {
+        update_lazy(N, s, e);
+        if (l > e || r < s) return 0;
+        if (l <= s && e <= r) return tree[N];
+        ll mid = (s + e) / 2;
+        return query(2 * N, s, mid, l, r) + query(2 * N + 1, mid + 1, e, l, r);
+    }
+};
+
+7. persistent segment trees
+struct PST {
+    int l, r, v;
+    PST() : l(0), r(0), v(0) {}
+};
+PST tree[300030]; //enough size!
+int tn; //index of node
+void update(int prv, int now, int s, int e, int idx, int v) {
+    if(s==e) {
+        tree[now].v=tree[prv].v+v;
+        return;
+    }
+    int mid=s+e>>1;
+    if(idx<=mid) {//update left
+        if(tree[now].l==0 || tree[now].l==tree[prv].l) tree[now].l=tn++;
+		//no leftson or same
+        
+        if(tree[now].r==0) tree[now].r=tree[prv].r;
+		//if rightson is empty, use original node
+        
+        update(tree[prv].l,tree[now].l,s,mid,idx,v);
+    }
+    else {
+        if(tree[now].r==0 || tree[now].r==tree[prv].r) tree[now].r=tn++;
+        if(tree[now].l==0) tree[now].l=tree[prv].l;
+        update(tree[prv].r,tree[now].r,mid+1,e,idx,v);
+    }
+    tree[now].v=tree[tree[now].l].v+tree[tree[now].r].v;
+}
+
+int query(int node, int s, int e, int l, int r) {
+    if(l<=s && e<=r) return tree[node].v;
+    if(s>r || e<l) return 0;
+    int mid=s+e>>1;
+    return query(tree[node].l,s,mid,l,r) + query(tree[node].r,mid+1,e,l,r);
+}
+
