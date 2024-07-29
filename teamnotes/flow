@@ -1,0 +1,173 @@
+1. dinic
+// O(min(fE, V^2E)). But all edge's capacity are 0 or 1, then O(min(V^(2/3), E^(1/2)))
+const int MAXN = 555;
+struct edge {
+    int to, cap, rev;
+};
+int level[MAXN];
+int work[MAXN];
+vector<edge> adj[MAXN];
+void add_edge(int from, int to, int c) {
+    adj[from].push_back({ to, c, (int)adj[to].size() });
+    adj[to].push_back({ from, 0, (int)adj[from].size() - 1 });
+}
+bool bfs(int src, int sink) {
+    fill(level, level + MAXN, -1);
+    fill(work, work + MAXN, 0);
+    level[src] = 0;
+    queue<int> q;
+    q.push(src);
+    while (!q.empty()) {
+        int now = q.front(); q.pop();
+        for (auto& e : adj[now]) {
+            if (e.cap > 0 && level[e.to] == -1) {
+                level[e.to] = level[now] + 1;
+                q.push(e.to);
+            }
+        }
+    }
+    return level[sink] != -1;
+}
+int dfs(int now, int sink, int amount) {
+    if (now == sink) return amount;
+    for (int& i = work[now]; i < adj[now].size(); i++) {
+        auto e = adj[now][i];
+        if (e.cap > 0 && level[e.to] == level[now] + 1) {
+            int df = dfs(e.to, sink, min(amount, e.cap));
+            if (df > 0) {
+                adj[now][i].cap -= df;
+                adj[e.to][e.rev].cap += df;
+                return df;
+            }
+        }
+    }
+    return 0;
+}
+int dinic(int src, int sink) {
+    int max_flow = 0;
+    while (bfs(src, sink)) {
+        while (1) {
+            int df = dfs(src, sink, INF);
+            if (!df) break;
+            max_flow += df;
+        }
+    }
+    return max_flow;
+}
+
+2. hopcroft-karp
+const int MAXN = 1010, MAXM = 1010;
+int dis[MAXN],l[MAXN],r[MAXM],vis[MAXN];
+vector<int> adj[MAXN];
+void add_edge(int l,int r) {adj[l].push_back(r);} //don't use add_edge(i, n+j), you have to add_edge(i,j)!
+bool bfs(int n){
+    queue<int> q;
+    bool ok=0;
+    memset(dis,0,sizeof(dis));
+    for(int i=1;i<=n;i++) {
+        if(l[i]==-1 && !dis[i]) q.push(i),dis[i]=1;
+    }
+    while(!q.empty()) {
+        int x=q.front(); q.pop();
+        for(auto &i: adj[x]) {
+            if(r[i]==-1) ok=1;
+            else if(!dis[r[i]]) {
+                dis[r[i]]=dis[x]+1;
+                q.push(r[i]);
+            }
+        }
+    }
+    return ok;
+}
+bool dfs(int x) {
+    if(vis[x]) return 0;
+    vis[x]=1;
+    for(auto &i: adj[x]) {
+        if(r[i]==-1 || (!vis[r[i]] && dis[r[i]] == dis[x]+1 && dfs(r[i]))) {
+            l[x]=i,r[i]=x;
+            return 1;
+        }
+    }
+    return 0;
+}
+int match(int n){
+    memset(l,-1,sizeof(l));
+    memset(r,-1,sizeof(r));
+    int ret=0;
+    while(bfs(n)) {
+        memset(vis,0,sizeof(vis));
+        for(int i=1;i<=n;i++) if(l[i]==-1 && dfs(i)) ret++;
+    }
+    return ret;
+}
+//find minimum vertex cover (=bipartite matching)
+//before call getcover function, you have to call match function first
+bool chk[MAXN + MAXM];
+void rdfs(int x, int n){
+	if(chk[x]) return;
+	chk[x] = 1;
+	for(auto &i : gph[x]){
+		chk[i + n] = 1;
+		rdfs(r[i], n);
+	}
+}
+vector<int> getcover(int n, int m){
+	match(n);
+	memset(chk, 0, sizeof(chk));
+	for(int i=1; i<=n; i++) if(l[i] == -1) rdfs(i, n);
+	vector<int> v;
+	for(int i=1; i<=n; i++) if(!chk[i]) v.push_back(i);    //A
+	for(int i=n+1; i<=n+m; i++) if(chk[i]) v.push_back(i); //B
+	return v;
+}
+
+3. minimum cost max flow
+const ll N = 222, INF = 1e9;
+struct edge { ll to, cap, rev, cost; };
+vector<edge> adj[N];
+ll dist[N], p[N], pe[N];
+bool inQ[N];
+void add_edge(ll u, ll v, ll c, ll cost) {
+	adj[u].push_back({ v, c, (ll)adj[v].size(), cost });
+	adj[v].push_back({ u, 0, (ll)adj[u].size() - 1, -cost });
+}
+bool spfa(ll s, ll t) {
+    fill(dist, dist + N, INF);
+    memset(inQ, 0, sizeof(inQ));
+    queue<ll> q;
+    q.emplace(s); dist[s] = 0; inQ[s] = 1;
+    bool ok=0;
+    while (!q.empty()) {
+        ll x = q.front(); q.pop();
+        if(x==t) ok=1;
+        inQ[x] = 0;
+        for (ll i = 0; i < adj[x].size(); i++) {
+            auto e = adj[x][i];
+            if (e.cap > 0 && dist[x] + e.cost < dist[e.to]) {
+                dist[e.to] = dist[x] + e.cost;
+                p[e.to] = x; pe[e.to] = i;
+                if (!inQ[e.to]) {
+                    inQ[e.to] = 1;
+                    q.emplace(e.to);
+                }
+            }
+        }
+
+    }
+    return ok;
+}
+pll mcmf(ll s, ll t) {
+    ll min_cost = 0, max_flow=0, flow, rev;
+    while (spfa(s, t)) {
+        flow = INF;
+        for (ll i = t; i != s; i = p[i]) flow = min(flow, adj[p[i]][pe[i]].cap);            
+        min_cost += flow * dist[t];
+        for (ll i = t; i != s; i = p[i]) {
+            rev = adj[p[i]][pe[i]].rev;
+            adj[p[i]][pe[i]].cap -= flow;
+            adj[i][rev].cap += flow;
+        }
+        max_flow+=flow;
+    }
+    return { min_cost,max_flow };
+}
