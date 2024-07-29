@@ -1,0 +1,136 @@
+1. hashing
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+struct Hashing {
+	const ll M=998244353;
+	ll P;
+    vector<ll> H, B;
+    void Build(const string& S, ll cnt) { //cnt: number of character
+		//if cnt+1 < enough gap < sqrt(M), use f(cnt+1, sqrt(M))
+		static uniform_int_distribution<int> f(cnt+1, M - 1);
+		P=f(rng);
+        H.resize(S.size() + 1);
+        B.resize(S.size() + 1);
+        B[0] = 1;
+        for (ll i = 1; i <= S.size(); i++) H[i] = (H[i - 1] * P + S[i - 1]) % M;
+        for (ll i = 1; i <= S.size(); i++) B[i] = B[i-1] * P % M;
+    }
+    ll sub(ll s, ll e) { //call with 0-based
+        s++; e++;
+		ll ret = (H[e] - H[s - 1] * B[e - s + 1]) % M;
+		return ret < 0 ? ret + M : ret;
+    }
+};
+
+//double hashing
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+struct Hashing {
+	const ll M0=998244353, M1=1'000'000'007;
+	ll P0, P1;
+    vector<vector<ll>> H, B;
+    void Build(const string& S, ll cnt) { //cnt: number of character
+		//if cnt+1 < enough gap < sqrt(M), use f(cnt+1, sqrt(M))
+		static uniform_int_distribution<int> f(cnt+1, M0 - 1);
+		static uniform_int_distribution<int> g(cnt+1, M1 - 1);
+		P0=f(rng), P1=g(rng);
+        H.resize(S.size() + 1,vector<ll>(2));
+        B.resize(S.size() + 1,vector<ll>(2));
+        B[0][0] = B[0][1]= 1;
+        for (ll i = 1; i <= S.size(); i++) {
+			H[i][0] = (H[i - 1][0] * P0 + S[i - 1]) % M0;
+			H[i][1] = (H[i - 1][1] * P1 + S[i - 1]) % M1;
+		}
+        for (ll i = 1; i <= S.size(); i++) {
+			B[i][0] = B[i-1][0] * P0 % M0;
+			B[i][1] = B[i-1][1] * P1 % M1;
+		}
+    }
+    pll sub(ll s, ll e) { //call with 0-based
+        s++; e++;
+		ll ret0 = (H[e][0] - H[s - 1][0] * B[e - s + 1][0]) % M0;
+		ll ret1 = (H[e][1] - H[s - 1][1] * B[e - s + 1][1]) % M1;
+		if(ret0 < 0) ret0 += M0;
+		if(ret1 < 0) ret1 += M1;
+        return {ret0, ret1};
+    }
+};
+
+2. kmp
+string s, t;
+ll fail[1000010];
+vector<ll> ans;
+void kmp() {
+	getline(cin, s);
+	getline(cin, t);
+	for (ll i = 1, j = 0; i < t.size(); i++) {
+		while (j > 0 && t[i] != t[j]) j = fail[j - 1];
+		if (t[i] == t[j]) fail[i] = ++j;
+	}
+	for (ll i = 0, j = 0; i < s.size(); i++) {
+		while (j > 0 && s[i] != t[j]) j = fail[j - 1];
+		if (s[i] == t[j]) {
+			if (j == t.size() - 1) {
+				ans.push_back(i - t.size() + 2);
+				j = fail[j];
+			}
+			else j++;
+		}
+	}
+	cout << ans.size() << endl;
+	for (ll i = 0; i < ans.size(); i++) cout << ans[i] << endl;
+}
+
+3. manacher
+ll n, ans;
+ll a[N]; //a[i]: Maximum length of palindrome centered on i
+string s, t;
+void solve() {
+    cin >> s;
+    n = s.size();
+    for (ll i = 0; i < n; i++) t += '#', t += s[i];
+    t += '#';
+    n = t.size();
+    ll r = 0, p = 0;
+    for (ll i = 0; i < n; i++) {
+        if (i <= r) a[i] = min(a[2 * p - i], r - i);
+        else a[i] = 0;
+        while (i - a[i] - 1 >= 0 && i + a[i] + 1 < n && t[i - a[i] - 1] == t[i + a[i] + 1]) a[i]++;
+        if (r < i + a[i]) r = i + a[i], p = i;
+    }
+}
+
+4. suffix array & longest common prefix
+vector<ll> SA(string& s) { //O(nlogn)
+    ll n = s.size(), m = max(256LL, n) + 1;
+    vector<ll> sa(n), r(n + n), nr(n + n), idx(n), cnt(m);
+    for (ll i = 0; i < n; i++) sa[i] = i, r[i] = s[i];
+    for (ll d = 1; d < n; d <<= 1) {
+        auto cmp = [&](ll i, ll j) {
+            return r[i] < r[j] || (r[i] == r[j] && r[i + d] < r[j + d]);
+        };
+        for (ll i = 0; i < m; i++) cnt[i] = 0;
+        for (ll i = 0; i < n; i++) cnt[r[i + d]]++;
+        for (ll i = 1; i < m; i++) cnt[i] += cnt[i - 1];
+        for (ll i = n - 1; i >= 0; i--) idx[--cnt[r[i + d]]] = i;
+        for (ll i = 0; i < m; i++) cnt[i] = 0;
+        for (ll i = 0; i < n; i++) cnt[r[i]]++;
+        for (ll i = 1; i < m; i++) cnt[i] += cnt[i - 1];
+        for (ll i = n - 1; i >= 0; i--) sa[--cnt[r[idx[i]]]] = idx[i];
+        nr[sa[0]] = 1;
+        for (ll i = 1; i < n; ++i) nr[sa[i]] = nr[sa[i - 1]] + cmp(sa[i - 1], sa[i]);
+        r = nr;
+        if (r[sa[n - 1]] == n) break;
+    }
+    return sa;
+}
+vector<ll> LCP(vector<ll>& sa, string& s) {
+    ll n = s.size();
+    vector<ll> lcp(n,0), isa(n);
+    for (ll i = 0; i < n; i++) isa[sa[i]] = i;
+    for (ll k = 0, i = 0; i < n; i++) {
+        if (isa[i]) {
+            for (ll j = sa[isa[i] - 1]; s[i + k] == s[j + k]; k++);
+            lcp[isa[i]] = (k ? k-- : 0);
+        }
+    }
+    return lcp;
+}
