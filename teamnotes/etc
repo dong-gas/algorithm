@@ -32,13 +32,11 @@ count! number of less than x with order_of_key := p
 check! find_by_order(p) == x
 
 
-2. int128
-이거 쓰는 거 있으면 제 거 말고 그거 넣는 게 좋을 거 같긴 함...
-그래서 걍 한글 주석 그대로 냅둘게요..
-//코포에서 G++20(64bit)로 해야 함.
+2. __int128
+//-2^127~2^127-1
+//use g++20(64bit) in codeforces
 //use bits/stdc++.h (extc++.h cause error)
-//int128말고 다른 거 출력할 때 printf쓰자... 
-//int128은 아래 함수 사용 or ull로 바꿔서 출력
+//do cin & cout with ull Or use below function
 __int128 read() {
     __int128 x = 0, f = 1;
     char ch = getchar();
