@@ -56,6 +56,7 @@ int dinic(int src, int sink) {
 }
 
 2. hopcroft-karp
+//O(min(ESqrt(V),fE))
 const int MAXN = 1010, MAXM = 1010;
 int dis[MAXN],l[MAXN],r[MAXM],vis[MAXN];
 vector<int> adj[MAXN];
