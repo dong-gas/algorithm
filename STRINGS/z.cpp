@@ -4,9 +4,22 @@ void Z(string& s, vector<int>& z) {
     z.resize(N, 0);
     z[0] = N;
     for (int i = 1; i < N; i++) {
-        if (i <= r) z[i] = min(r - i, z[i - l]);
-        for (; s[i + z[i]] == s[z[i]];) z[i]++;
-        if (i > r) l = i;
-        r = max(r, i + z[i] - 1);
+        if (i > r) {
+            l = r = i;
+            while (r < N && s[r - l] == s[r]) r++;
+            z[i] = r - l;
+            r--;
+        }
+        else {
+            int k = i - l;
+            if (z[k] < r - i + 1)
+                z[i] = z[k];
+            else {
+                l = i;
+                while (r < N && s[r - l] == s[r]) r++;
+                z[i] = r - l;
+                r--;
+            }
+        }
     }
 }
