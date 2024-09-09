@@ -46,6 +46,7 @@ Strings
 * kmp
 * manacher
 * suffix array + longest common prefix
+* z
 * ~~aho-corasick~~
 
 Geometry
