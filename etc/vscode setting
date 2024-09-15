@@ -1,0 +1,3 @@
+C_Cpp: Clang_format_fallback Style
+
+{ BasedOnStyle: Google, IndentWidth: 4, AllowShortFunctionsOnASingleLine : true,ColumnLimit: 0, BreakBeforeBraces: Custom, AllowShortIfStatementsOnASingleLine: AllIfsAndElse, BraceWrapping: { BeforeElse: true }, AllowShortBlocksOnASingleLine: true}
