@@ -1,0 +1,26 @@
+/*
+아래 pragma 추가하면 /64 -> /256
+근데, 로컬에선 잘 안 됨.. boj나 cf에선 잘 되는 듯.
+단, c++20이상에서는 avx2를 헤더파일들 밑에 두면 돈다.
+ex)
+#pragma GCC optimize("O3")
+#include <bits/stdc++.h>
+#pragma GCC target("avx2")
+*/
+
+bitset<1010> b; 
+//default: 0
+
+/*
+reset(2) : 2번을 0으로 변경 생략 시 전체 비트 0
+set(2, 0 or 1) : 2번을 0 또는 1로 변경 생략 시 전체 비트 1
+flip(2) : 2번을 반전(0이면 1로, 1이면 0으로) 생략 시 전체 비트 반전
+all() : 비트셋에서 모든 비트가 1일 경우 true, 그렇지 않으면 false
+any() : 비트셋에 비트가 1인 것이 하나라도 존재한다면 true 그렇지 않으면 false
+none() : 비트셋에 비트가 1인 것이 하나라도 존재하지 않는다면 true 그렇지 않으면 false
+to_string() : 비트셋을 문자열로 변환한다.
+to_ulong() : 비트셋을 unsigned long integer 타입으로 변환한다.
+to_ullong() : 비트셋을 unsigned long long 타입으로 변환한다.
+size() : bitset의 size를 반환한다.
+count() : 현재 bitset의 있는 비트 1의 개수를 반환한다.
+*/
