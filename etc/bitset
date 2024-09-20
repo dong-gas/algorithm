@@ -3,7 +3,7 @@
 근데, 로컬에선 잘 안 됨.. boj나 cf에선 잘 되는 듯.
 단, c++20이상에서는 avx2를 헤더파일들 밑에 두면 돈다.
 ex)
-#pragma GCC optimize("O3")
+#pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
 #pragma GCC target("avx2")
 */
