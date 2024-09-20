@@ -32,6 +32,8 @@ Trees
 * O(1) LCA with O(NlogN) preprocessing
 * dynamic segment tree
 * li chao tree
+* lazy segment tree
+* ~~LCA~~
   
 Math
 * extended euclidean algorithm
@@ -58,3 +60,9 @@ Etc
 * Sieve of Eratosthenes
 * ~~rope~~
 * PBDS(Policy Based Data Structure)
+* random
+* __int128
+* bitset
+* degree sequence
+* disjoint_set
+* distance
