@@ -9,6 +9,11 @@ template<class T> using PBDS = tree<T, null_type, less<T>, rb_tree_tag, tree_ord
 template<class T> using multiPBDS = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 PBDS<ll> s;
 
+/*
+pbds swap: O(1)아님.
+small to large할 때 주의
+*/
+
 //s.order_of_key(x): x보다 작은(미만) 원소의 개수
 //s.find_by_order(y): y번째(0-based) 원소가 있는 iterator 반환 (0-based다. 즉, s.find_by_order(5)는 6번째 원소 반환)
 
