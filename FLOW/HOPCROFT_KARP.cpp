@@ -57,7 +57,7 @@ bool chk[MAXN + MAXM];
 void rdfs(int x, int n){
 	if(chk[x]) return;
 	chk[x] = 1;
-	for(auto &i : gph[x]){
+	for(auto &i : adj[x]){
 		chk[i + n] = 1;
 		rdfs(r[i], n);
 	}
