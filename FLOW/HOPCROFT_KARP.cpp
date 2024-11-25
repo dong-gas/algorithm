@@ -53,6 +53,8 @@ int match(int n){
 
 //find minimum vertex cover (=이분매칭)
 //match함수로 이분매칭 돌리고 getcover 호출하면 됨.
+//왼쪽: 1 ~ n
+//오른쪽 : n + 1 ~ n + m
 bool chk[MAXN + MAXM];
 void rdfs(int x, int n){
 	if(chk[x]) return;
