@@ -9,10 +9,10 @@
 //query: 구간 합
 struct lazy_seg { 
     vector<ll> tree, lazy;
-    void make_tree(ll sz) {
-        tree.resize(4*sz+4,0); //값은 알아서 잘..
-        lazy.resize(4*sz+4,0);
-    }
+    lazy_seg(ll sz) {
+        tree.resize(4 * (sz + 1), 0); // 값은 알아서 잘.
+        lazy.resize(4 * (sz + 1), 0);
+    } 
     ll init(ll N, ll s, ll e) {
     	  if (s == e) return tree[N] = arr[s];
     	  ll mid = (s + e) / 2;
@@ -58,10 +58,10 @@ struct lazy_seg {
 //query: 구간에서 최솟값
 struct lazy_seg { 
     vector<ll> tree, lazy;
-    void make_tree(ll sz) {
-        tree.resize(4*sz+4,0); //값은 알아서 잘..
-        lazy.resize(4*sz+4,0);
-    }
+    lazy_seg(ll sz) {
+        tree.resize(4 * (sz + 1), 0); // 값은 알아서 잘.
+        lazy.resize(4 * (sz + 1), 0);
+    } 
     ll init(ll N, ll s, ll e) {
     	  if (s == e) return tree[N] = arr[s];
     	  ll mid = (s + e) / 2;
