@@ -13,11 +13,6 @@ struct lazy_seg {
         tree.resize(4 * (sz + 1), 0); // 값은 알아서 잘.
         lazy.resize(4 * (sz + 1), 0);
     } 
-    ll init(ll N, ll s, ll e) {
-    	  if (s == e) return tree[N] = arr[s];
-    	  ll mid = (s + e) / 2;
-    	  return tree[N] = init(2 * N, s, mid) + init(2 * N + 1, mid + 1, e);
-    }
     void update_lazy(ll N, ll s, ll e) {
         if (!lazy[N]) return;
         tree[N] += (e - s + 1) * lazy[N];
