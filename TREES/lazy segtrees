@@ -7,12 +7,12 @@
 //1.
 //update: 구간에 합 더하기
 //query: 구간 합
-struct lazy_seg { 
+struct lazy_seg {
     vector<ll> tree, lazy;
     lazy_seg(ll sz) {
-        tree.resize(4 * (sz + 1), 0); // 값은 알아서 잘.
+        tree.resize(4 * (sz + 1), 0);  // 값은 알아서 잘.
         lazy.resize(4 * (sz + 1), 0);
-    } 
+    }
     void update_lazy(ll N, ll s, ll e) {
         if (!lazy[N]) return;
         tree[N] += (e - s + 1) * lazy[N];
@@ -26,16 +26,12 @@ struct lazy_seg {
         update_lazy(N, s, e);
         if (l > e || r < s) return;
         if (l <= s && e <= r) {
-            tree[N] += (e - s + 1) * val;
-            if (s != e) {
-                lazy[2 * N] += val;
-                lazy[2 * N + 1] += val;
-            }
+            lazy[N] += val;
+            update_lazy(N, s, e);            
             return;
         }
         ll mid = (s + e) / 2;
-        update(N * 2, s, mid, l, r, val);
-        update(N * 2 + 1, mid + 1, e, l, r, val);
+        update(N * 2, s, mid, l, r, val), update(N * 2 + 1, mid + 1, e, l, r, val);
         tree[N] = tree[2 * N] + tree[2 * N + 1];
     }
     ll query(ll N, ll s, ll e, ll l, ll r) {
@@ -46,7 +42,6 @@ struct lazy_seg {
         return query(2 * N, s, mid, l, r) + query(2 * N + 1, mid + 1, e, l, r);
     }
 };
-
 
 //2.
 //update: 구간에 합 더하기
