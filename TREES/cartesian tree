@@ -1,0 +1,12 @@
+stack<int> st;
+int root = 1;
+for (int i = 1; i <= n; i++) {
+    cin >> a[i];
+    while (!st.empty() && a[st.top()] < a[i]) {
+        l[i] = st.top();
+        st.pop();
+    }
+    if (!st.empty()) r[st.top()] = i;
+    st.push(i);
+    if (a[i] > a[root]) root = i;
+}
