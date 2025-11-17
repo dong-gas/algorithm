@@ -1,0 +1,19 @@
+ll HilOrd(int x, int y, int k) {
+    // long long 써야 함.
+    // k는 n < 2^k인 첫 k로
+    // HilOrd 오름차순 기준으로 쿼리 처리
+    // O(QB + NN/B)라서 B = N/sqrt(Q)로 잡으면
+    // O(Nsqrt(Q)) 이고, Mo's의 (N+Q)sqrt(N)보다 항상 빠르다.
+    ll c, d = 0, p = 0, r = 0, v;
+    for (; k >= 0; k--) {
+        v = 0;
+        if (y - 1 >> k & 1)v = 3;
+        if (x - 1 >> k & 1)v ^= 1;
+        c = (v + r ^ d) % 4;
+        p += c << 2 * k;
+        if (c == d)r += 3;
+        if (c + d == 3)r++;
+        if (c == 0 || c == 3)d ^= 3;
+    }
+    return p + 1;
+}
